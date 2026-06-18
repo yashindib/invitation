@@ -31,3 +31,5 @@ next-env.d.ts
 # editor
 .vscode/
 .idea/
+
+tsconfig.tsbuildinfo
