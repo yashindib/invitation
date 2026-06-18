@@ -3,8 +3,7 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { config } from "@/lib/wedding-config";
-import { CalligraphyReveal } from "@/components/fx/Reveal";
-import SectionDivider from "@/components/fx/SectionDivider";
+import SectionHeading from "@/components/fx/SectionHeading";
 
 const COLORS = ["#F4C9C9", "#C97B84", "#8C4A52", "#E2C87E", "#8A9A6B"];
 
@@ -61,18 +60,15 @@ export default function RSVP() {
   return (
     <section className="relative overflow-hidden bg-cream px-6 py-24 sm:py-32">
       <div ref={hostRef} className="relative mx-auto max-w-xl">
-        <div className="text-center">
-          <p className="font-display text-sm uppercase tracking-luxe text-rose">
-            We hope you can come
-          </p>
-          <h2 className="text-section mt-3 font-display font-light text-ink">
-            <CalligraphyReveal text="RSVP" />
-          </h2>
-          <p className="mt-3 font-body text-sm text-muted">
-            Kindly respond {config.rsvp.deadline}
-          </p>
-          <SectionDivider className="mt-6" />
-        </div>
+        <SectionHeading
+          index={7}
+          kicker="We hope you can come"
+          kickerSi="පැමිණෙන්න"
+          title="RSVP"
+        />
+        <p className="mt-4 text-center font-body text-sm text-muted">
+          Kindly respond {config.rsvp.deadline}
+        </p>
 
         <AnimatePresence mode="wait">
           {sent ? (

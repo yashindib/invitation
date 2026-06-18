@@ -12,14 +12,12 @@ export default function VideoHero() {
   const [srcIndex, setSrcIndex] = useState(0);
   const sources = [media.heroVideo, media.heroVideoAlt];
 
-  // if a clip fails, try the alternate; the poster image always shows underneath
   const handleError = () => {
     if (srcIndex < sources.length - 1) setSrcIndex((i) => i + 1);
   };
 
   return (
     <section className="relative h-screen-safe w-full overflow-hidden">
-      {/* poster fallback layer (always visible behind the video) */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${media.heroPoster})` }}
@@ -40,63 +38,91 @@ export default function VideoHero() {
         <source src={sources[srcIndex]} type="video/mp4" />
       </video>
 
-      {/* legibility gradient */}
+      {/* legibility gradient — warm maroon wash */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, rgba(74,51,56,0.35) 0%, rgba(140,74,82,0.18) 40%, rgba(74,51,56,0.55) 100%)",
+            "linear-gradient(180deg, rgba(61,26,20,0.42) 0%, rgba(110,30,30,0.22) 38%, rgba(40,18,14,0.62) 100%)",
         }}
       />
 
-      <FlyingBirds count={3} color="#FFF8F5" />
-      <PetalField density={10} />
+      <FlyingBirds count={3} color="#E6CB7A" />
+      <PetalField density={9} />
+
+      {/* thin gold frame with corner ticks — modern editorial */}
+      <div className="pointer-events-none absolute inset-4 z-10 border border-gold-light/30 sm:inset-6">
+        {["left-0 top-0", "right-0 top-0", "left-0 bottom-0", "right-0 bottom-0"].map((p) => (
+          <span
+            key={p}
+            className={`absolute ${p} h-5 w-5 border-gold-light/70`}
+            style={{
+              borderTopWidth: p.includes("top") ? 1 : 0,
+              borderBottomWidth: p.includes("bottom") ? 1 : 0,
+              borderLeftWidth: p.includes("left") ? 1 : 0,
+              borderRightWidth: p.includes("right") ? 1 : 0,
+            }}
+          />
+        ))}
+      </div>
 
       {/* content */}
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-ivory">
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="font-display text-sm uppercase tracking-luxe text-ivory/85 sm:text-base"
+          className="font-sinhala text-lg text-gold-light sm:text-xl"
         >
-          We&apos;re getting married
+          {config.invitationSi}
+        </motion.p>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.4 }}
+          className="mt-2 font-display text-[0.7rem] uppercase tracking-luxe text-ivory/80 sm:text-xs"
+        >
+          Together with our families
         </motion.p>
 
         <motion.h1
-          initial={{ opacity: 0, scale: 0.94 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="text-names mt-2 font-script leading-none drop-shadow-[0_4px_24px_rgba(74,51,56,0.5)]"
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.1, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-5 font-display font-light leading-[0.95] drop-shadow-[0_4px_24px_rgba(40,18,14,0.6)]"
+          style={{ fontSize: "clamp(2.6rem, 11vw, 6.5rem)" }}
         >
-          {config.couple.bride}
-        </motion.h1>
-
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.9 }}
-          className="my-1 font-script text-3xl text-gold-light sm:text-4xl"
-        >
-          &amp;
-        </motion.span>
-
-        <motion.h1
-          initial={{ opacity: 0, scale: 0.94 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="text-names font-script leading-none drop-shadow-[0_4px_24px_rgba(74,51,56,0.5)]"
-        >
-          {config.couple.groom}
+          {config.couple.bride.split(" ")[0]}
+          <span className="mx-3 font-script text-gold-light">&amp;</span>
+          {config.couple.groom.split(" ")[0]}
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.9 }}
+          className="mt-3 font-sinhala text-xl text-ivory/90 sm:text-2xl"
+        >
+          {config.couple.brideSi} &amp; {config.couple.groomSi}
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 1.1 }}
-          className="mt-6 font-display text-lg tracking-[0.3em] text-ivory/90 sm:text-xl"
+          className="mt-7 flex items-center gap-4 font-display text-sm tracking-[0.3em] text-ivory/90 sm:text-base"
         >
+          <span className="h-px w-8 bg-gold-light/60" />
           {config.dateShort}
+          <span className="h-px w-8 bg-gold-light/60" />
+        </motion.div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1.3 }}
+          className="mt-2 font-display text-xs uppercase tracking-luxe text-gold-light/90"
+        >
+          Poruwa at {config.nekath.poruwa}
         </motion.p>
       </div>
 
@@ -109,7 +135,7 @@ export default function VideoHero() {
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="flex flex-col items-center gap-2">
-          <span className="font-display text-xs uppercase tracking-luxe">Scroll</span>
+          <span className="font-display text-[0.65rem] uppercase tracking-luxe">Scroll</span>
           <span className="flex h-9 w-5 justify-center rounded-full border border-ivory/60 pt-1.5">
             <span className="h-2 w-[3px] animate-pulse-soft rounded-full bg-ivory/80" />
           </span>

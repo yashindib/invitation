@@ -4,10 +4,13 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { prefersReducedMotion } from "@/lib/utils";
 
-/** A small SVG bird with gently flapping wings. */
+/**
+ * A Hansa (swan) — a classic Sinhala motif — drawn in a single modern line.
+ * `carryLetter` gives it a small betel leaf to deliver.
+ */
 export function Bird({
-  size = 34,
-  color = "#6E5258",
+  size = 40,
+  color = "#C9A24C",
   carryLetter = false,
 }: {
   size?: number;
@@ -16,38 +19,52 @@ export function Bird({
 }) {
   return (
     <div style={{ width: size, height: size }} className="relative">
-      <svg viewBox="0 0 64 48" width="100%" height="100%" aria-hidden="true">
-        <g className="bird-wings" style={{ transformOrigin: "32px 24px" }}>
-          <path
-            d="M4 24 C 16 8, 28 8, 32 22 C 36 8, 48 8, 60 24"
-            fill="none"
-            stroke={color}
-            strokeWidth="3.4"
-            strokeLinecap="round"
-          />
-        </g>
-        <circle cx="32" cy="23" r="2.1" fill={color} />
+      <svg viewBox="0 0 72 56" width="100%" height="100%" aria-hidden="true">
+        {/* body + curved neck of the hansa */}
+        <path
+          d="M8 40 C 10 30, 22 30, 30 34 C 40 38, 50 38, 58 30 C 60 27, 60 22, 56 20 C 53 18, 49 19, 49 23 C 49 26, 52 27, 54 26"
+          fill="none"
+          stroke={color}
+          strokeWidth="2.2"
+          strokeLinecap="round"
+        />
+        {/* wing — flaps */}
+        <path
+          className="bird-wings"
+          style={{ transformOrigin: "30px 34px" }}
+          d="M22 34 C 30 22, 42 22, 48 30"
+          fill="none"
+          stroke={color}
+          strokeWidth="2.2"
+          strokeLinecap="round"
+        />
+        <circle cx="53.5" cy="22.5" r="1.1" fill={color} />
       </svg>
       {carryLetter && (
         <svg
-          viewBox="0 0 24 18"
-          width={size * 0.5}
-          height={size * 0.5}
+          viewBox="0 0 20 24"
+          width={size * 0.34}
+          height={size * 0.4}
           className="absolute left-1/2 top-full -translate-x-1/2"
           aria-hidden="true"
         >
-          <rect x="1" y="1" width="22" height="16" rx="2" fill="#FFF8F5" stroke="#C9A24C" strokeWidth="1" />
-          <path d="M1 3 L12 10 L23 3" fill="none" stroke="#C97B84" strokeWidth="1" />
-          <circle cx="12" cy="11" r="2" fill="#8C4A52" />
+          {/* betel leaf */}
+          <path
+            d="M10 1 C 18 8, 18 18, 10 23 C 2 18, 2 8, 10 1 Z"
+            fill="#7A8B4F"
+            stroke="#5E6E3C"
+            strokeWidth="1"
+          />
+          <path d="M10 4 V21" stroke="#5E6E3C" strokeWidth="0.8" />
         </svg>
       )}
       <style jsx>{`
         .bird-wings {
-          animation: flap 0.42s ease-in-out infinite alternate;
+          animation: flap 0.5s ease-in-out infinite alternate;
         }
         @keyframes flap {
           0% {
-            transform: scaleY(0.55) translateY(2px);
+            transform: scaleY(0.5) translateY(3px);
           }
           100% {
             transform: scaleY(1) translateY(-1px);
@@ -64,11 +81,11 @@ export function Bird({
 }
 
 /**
- * Ambient birds that drift across the container along a gentle arc.
+ * Ambient hansa gliding across the container along a gentle arc.
  */
 export default function FlyingBirds({
   count = 3,
-  color = "#8A6F73",
+  color = "#C9A24C",
   className = "",
 }: {
   count?: number;
@@ -90,15 +107,7 @@ export default function FlyingBirds({
         gsap
           .timeline({ repeat: -1, delay: i * 3.5 })
           .to(b, { opacity: 1, duration: 1 }, 0)
-          .to(
-            b,
-            {
-              x: "112vw",
-              duration: 16 + Math.random() * 8,
-              ease: "none",
-            },
-            0
-          )
+          .to(b, { x: "112vw", duration: 16 + Math.random() * 8, ease: "none" }, 0)
           .to(
             b,
             {
@@ -125,7 +134,7 @@ export default function FlyingBirds({
     >
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} data-bird className="absolute left-0 top-0">
-          <Bird size={26 + (i % 3) * 8} color={color} />
+          <Bird size={30 + (i % 3) * 10} color={color} />
         </div>
       ))}
     </div>

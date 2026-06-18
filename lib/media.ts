@@ -1,48 +1,46 @@
 /**
  * All external media lives here so it is easy to verify and swap.
- * Media is served from free CDNs (Unsplash photos, Mixkit/Coverr video) and
- * therefore REQUIRES AN INTERNET CONNECTION to display.
+ * Sourced from free CDNs (Pexels) and therefore REQUIRES AN INTERNET CONNECTION.
  *
- * If any clip or image 404s, just replace the URL below — nothing else changes.
+ * Photos are real Sri Lankan wedding photography (Pexels "sri lankan wedding").
+ * The hero videos are royalty-free traditional South-Asian wedding footage
+ * (lotus garlands / ceremonial items) — the closest free-licensed match to a
+ * Sinhala poruwa mood; swap the URL if you have your own clip.
+ *
  * Every <video> has a `poster` image fallback so the hero still looks good if a
  * clip is blocked or slow.
  */
 
-const unsplash = (id: string, w = 1200) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+const pexels = (id: number, w = 1200) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
 
 export const media = {
-  // --- Hero background video (romantic florals / soft focus) ---
+  // --- Hero background video (traditional wedding, floral / ceremonial) ---
   heroVideo:
-    "https://assets.mixkit.co/videos/preview/mixkit-pink-flowers-moving-in-the-wind-1164-large.mp4",
+    "https://videos.pexels.com/video-files/35011747/14832037_1920_1080_50fps.mp4", // lotus garlands
   heroVideoAlt:
-    "https://assets.mixkit.co/videos/preview/mixkit-white-flowers-on-a-tree-branch-1219-large.mp4",
-  heroPoster: unsplash("1457089328109-e5d9bd499191", 1600),
+    "https://videos.pexels.com/video-files/35011906/14832179_1920_1080_50fps.mp4", // ceremonial items
+  heroPoster: pexels(9812684, 1600),
 
   // --- Ambient music (royalty-free, off by default) ---
-  music:
-    "https://cdn.pixabay.com/audio/2022/03/15/audio_8cb749cb7c.mp3",
+  music: "https://cdn.pixabay.com/audio/2022/03/15/audio_8cb749cb7c.mp3",
 
-  // --- Our Story photos ---
-  story: [
-    unsplash("1511285560929-80b456fea0bc"), // couple
-    unsplash("1519225421980-715cb0215aed"), // wedding embrace
-    unsplash("1583939003579-730e3918a45a"), // proposal / rings
-  ],
+  // --- Our Story photos (a Sri Lankan wedding couple shoot) ---
+  story: [pexels(9812641), pexels(9812723), pexels(9812684)],
 
-  // --- Gallery grid ---
+  // --- Gallery grid (Sri Lankan wedding moments) ---
   gallery: [
-    unsplash("1606800052052-a08af7148866", 900), // rings on flowers
-    unsplash("1522673607200-164d1b6ce486", 900), // bouquet
-    unsplash("1464366400600-7168b8af9bc3", 900), // table setting
-    unsplash("1490750967868-88aa4486c946", 900), // pink flowers
-    unsplash("1519741497674-611481863552", 900), // wedding details
-    unsplash("1469371670807-013ccf25f16a", 900), // couple silhouette
+    pexels(11563688, 900),
+    pexels(6490259, 900),
+    pexels(11518708, 900),
+    pexels(11743131, 900),
+    pexels(11207445, 900),
+    pexels(13325048, 900),
   ],
 
   // --- Location / venue still ---
-  venue: unsplash("1519167758481-83f550bb49b3", 1200),
+  venue: pexels(17312932, 1200),
 
-  // --- Dress code accent ---
-  dressCode: unsplash("1525258946800-98cfd641d0de", 1000),
+  // --- Dress code accent (traditional attire) ---
+  dressCode: pexels(9511858, 1000),
 } as const;

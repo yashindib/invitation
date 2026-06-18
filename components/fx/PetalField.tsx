@@ -15,22 +15,23 @@ interface Petal {
   opacity: number;
 }
 
-const HUES = ["#F4C9C9", "#F8DCD8", "#C97B84", "#E2C87E", "#FBE3DE"];
+// frangipani (araliya) — cream/gold temple-flower tones
+const HUES = ["#FFF7E6", "#F7E7BE", "#EFD9A8", "#FBEFD0", "#E6CB7A"];
 
 function PetalShape({ color }: { color: string }) {
   return (
     <svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true">
-      {/* a soft rounded petal */}
+      {/* a single frangipani petal — rounded tip, tapered base */}
       <path
-        d="M12 1C7 5 4 9 4 14c0 5 4 9 8 9s8-4 8-9c0-5-3-9-8-13Z"
+        d="M12 1.5C8.5 5 6.5 9 7 14c0.4 4 3 8.5 5 8.5s4.6-4.5 5-8.5c0.5-5-1.5-9-5-12.5Z"
         fill={color}
-        opacity="0.9"
+        opacity="0.92"
       />
+      {/* warm golden blush at the base, like araliya */}
       <path
-        d="M12 1C12 7 12 16 12 23"
-        stroke="rgba(140,74,82,0.18)"
-        strokeWidth="0.6"
-        fill="none"
+        d="M12 22.5C10 22.5 8 19 7.6 15 c 2.6 1.4 6.2 1.4 8.8 0 C 16 19 14 22.5 12 22.5Z"
+        fill="#E6B85A"
+        opacity="0.35"
       />
     </svg>
   );

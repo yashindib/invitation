@@ -37,13 +37,13 @@ export default function SectionDivider({
       <svg
         ref={ref}
         viewBox="0 0 320 40"
-        className="h-9 w-[min(80vw,320px)]"
+        className="h-9 w-[min(78vw,300px)]"
         fill="none"
       >
         <line
           x1="20"
           y1="20"
-          x2="135"
+          x2="138"
           y2="20"
           stroke="#C9A24C"
           strokeWidth="1"
@@ -51,7 +51,7 @@ export default function SectionDivider({
           style={{ ["--len" as string]: 120 }}
         />
         <line
-          x1="185"
+          x1="182"
           y1="20"
           x2="300"
           y2="20"
@@ -60,22 +60,30 @@ export default function SectionDivider({
           className={cls}
           style={{ ["--len" as string]: 120, transitionDelay: "0.1s" }}
         />
-        {/* center flourish */}
+        {/* center lotus — minimal, three strokes */}
         <path
-          d="M160 8 C 150 14, 150 26, 160 32 C 170 26, 170 14, 160 8 Z"
-          stroke="#C97B84"
-          strokeWidth="1.2"
+          d="M160 8 C 156 14, 156 22, 160 28 C 164 22, 164 14, 160 8 Z"
+          stroke="#6E1E1E"
+          strokeWidth="1.1"
           className={cls}
-          style={{ ["--len" as string]: 80, transitionDelay: "0.2s" }}
+          style={{ ["--len" as string]: 70, transitionDelay: "0.2s" }}
         />
         <path
-          d="M160 14 C 155 18, 155 22, 160 26 C 165 22, 165 18, 160 14 Z"
-          fill="#F4C9C9"
-          className={drawn ? "opacity-100" : "opacity-0"}
-          style={{ transition: "opacity 0.8s ease 0.9s" }}
+          d="M160 28 C 152 24, 149 18, 150 13 C 156 16, 159 22, 160 28 Z"
+          stroke="#C9A24C"
+          strokeWidth="1"
+          className={cls}
+          style={{ ["--len" as string]: 70, transitionDelay: "0.3s" }}
         />
-        <circle cx="135" cy="20" r="2" fill="#C9A24C" className={drawn ? "opacity-100" : "opacity-0"} style={{ transition: "opacity 0.6s ease 0.7s" }} />
-        <circle cx="185" cy="20" r="2" fill="#C9A24C" className={drawn ? "opacity-100" : "opacity-0"} style={{ transition: "opacity 0.6s ease 0.7s" }} />
+        <path
+          d="M160 28 C 168 24, 171 18, 170 13 C 164 16, 161 22, 160 28 Z"
+          stroke="#C9A24C"
+          strokeWidth="1"
+          className={cls}
+          style={{ ["--len" as string]: 70, transitionDelay: "0.3s" }}
+        />
+        <circle cx="138" cy="20" r="1.8" fill="#C9A24C" className={drawn ? "opacity-100" : "opacity-0"} style={{ transition: "opacity 0.6s ease 0.7s" }} />
+        <circle cx="182" cy="20" r="1.8" fill="#C9A24C" className={drawn ? "opacity-100" : "opacity-0"} style={{ transition: "opacity 0.6s ease 0.7s" }} />
       </svg>
     </div>
   );

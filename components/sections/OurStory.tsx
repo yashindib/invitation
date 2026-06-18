@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { config } from "@/lib/wedding-config";
 import { media } from "@/lib/media";
-import { Reveal, CalligraphyReveal } from "@/components/fx/Reveal";
-import SectionDivider from "@/components/fx/SectionDivider";
+import { Reveal } from "@/components/fx/Reveal";
+import SectionHeading from "@/components/fx/SectionHeading";
 import PetalField from "@/components/fx/PetalField";
+import AnimatedImage from "@/components/fx/AnimatedImage";
 
 export default function OurStory() {
   return (
@@ -13,15 +13,12 @@ export default function OurStory() {
       <PetalField density={10} />
 
       <div className="relative z-10 mx-auto max-w-5xl">
-        <div className="text-center">
-          <p className="font-display text-sm uppercase tracking-luxe text-rose">
-            How it all began
-          </p>
-          <h2 className="text-section mt-3 font-display font-light text-ink">
-            <CalligraphyReveal text="Our Story" />
-          </h2>
-          <SectionDivider className="mt-6" />
-        </div>
+        <SectionHeading
+          index={1}
+          kicker="How it all began"
+          kickerSi="අපගේ කතාව"
+          title="Our Story"
+        />
 
         <div className="mt-14 space-y-16 sm:space-y-24">
           {config.story.map((s, i) => {
@@ -35,14 +32,13 @@ export default function OurStory() {
               >
                 <Reveal className="w-full sm:w-1/2" y={50}>
                   <div className="group relative aspect-[4/5] overflow-hidden rounded-xl shadow-rose-lg">
-                    <Image
+                    <AnimatedImage
                       src={media.story[i % media.story.length]}
                       alt={s.title}
-                      fill
                       sizes="(max-width: 640px) 90vw, 45vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      variant={i}
                     />
-                    <span className="absolute left-4 top-4 rounded-full glass-blush px-4 py-1 font-display text-sm tracking-widest text-wine">
+                    <span className="absolute left-4 top-4 z-10 rounded-full glass-blush px-4 py-1 font-display text-sm tracking-widest text-wine">
                       {s.year}
                     </span>
                   </div>

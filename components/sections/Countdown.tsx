@@ -33,14 +33,15 @@ export default function Countdown() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-[#5C343B] px-6 py-24 text-ivory sm:py-32">
+    <section className="relative overflow-hidden bg-wine px-6 py-24 text-ivory sm:py-32">
       <Fireflies density={16} />
       <div className="relative z-10 mx-auto max-w-3xl text-center">
-        <p className="font-display text-sm uppercase tracking-luxe text-gold-light">
+        <p className="font-sinhala text-2xl text-gold-light">තව දින</p>
+        <p className="mt-2 font-display text-sm uppercase tracking-luxe text-ivory/70">
           Counting down
         </p>
         <h2 className="text-section mt-3 font-display font-light">
-          <CalligraphyReveal text="Until we say I do" />
+          <CalligraphyReveal text="Until We Say I Do" />
         </h2>
         <SectionDivider className="mt-6" />
 

@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Great_Vibes, Cormorant_Garamond, Jost } from "next/font/google";
+import {
+  Great_Vibes,
+  Cormorant_Garamond,
+  Jost,
+  Noto_Serif_Sinhala,
+} from "next/font/google";
 import "./globals.css";
 import { config } from "@/lib/wedding-config";
 
@@ -21,6 +26,13 @@ const body = Jost({
   weight: ["300", "400", "500", "600"],
   subsets: ["latin"],
   variable: "--font-body",
+  display: "swap",
+});
+
+const sinhala = Noto_Serif_Sinhala({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["sinhala"],
+  variable: "--font-sinhala",
   display: "swap",
 });
 
@@ -49,7 +61,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${script.variable} ${display.variable} ${body.variable}`}
+      className={`${script.variable} ${display.variable} ${body.variable} ${sinhala.variable}`}
       suppressHydrationWarning
     >
       <body className="antialiased">{children}</body>

@@ -1,34 +1,30 @@
 "use client";
 
-import Image from "next/image";
 import { config } from "@/lib/wedding-config";
 import { media } from "@/lib/media";
-import { Reveal, CalligraphyReveal } from "@/components/fx/Reveal";
-import SectionDivider from "@/components/fx/SectionDivider";
+import { Reveal } from "@/components/fx/Reveal";
+import SectionHeading from "@/components/fx/SectionHeading";
+import AnimatedImage from "@/components/fx/AnimatedImage";
 
 export default function Location() {
   return (
     <section className="relative overflow-hidden bg-ivory px-6 py-24 sm:py-32">
       <div className="mx-auto max-w-5xl">
-        <div className="text-center">
-          <p className="font-display text-sm uppercase tracking-luxe text-rose">
-            Find your way
-          </p>
-          <h2 className="text-section mt-3 font-display font-light text-ink">
-            <CalligraphyReveal text="The Venue" />
-          </h2>
-          <SectionDivider className="mt-6" />
-        </div>
+        <SectionHeading
+          index={5}
+          kicker="Find your way"
+          kickerSi="ස්ථානය"
+          title="The Venue"
+        />
 
         <div className="mt-12 grid items-center gap-8 sm:grid-cols-2">
           <Reveal y={50}>
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-rose-lg">
-              <Image
+              <AnimatedImage
                 src={media.venue}
                 alt={config.reception.name}
-                fill
                 sizes="(max-width: 640px) 90vw, 45vw"
-                className="object-cover"
+                variant={2}
               />
             </div>
           </Reveal>

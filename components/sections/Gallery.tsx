@@ -4,8 +4,9 @@ import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { media } from "@/lib/media";
-import { Reveal, CalligraphyReveal } from "@/components/fx/Reveal";
-import SectionDivider from "@/components/fx/SectionDivider";
+import { Reveal } from "@/components/fx/Reveal";
+import SectionHeading from "@/components/fx/SectionHeading";
+import AnimatedImage from "@/components/fx/AnimatedImage";
 
 export default function Gallery() {
   const [active, setActive] = useState<string | null>(null);
@@ -13,15 +14,12 @@ export default function Gallery() {
   return (
     <section className="relative overflow-hidden bg-cream px-6 py-24 sm:py-32">
       <div className="mx-auto max-w-5xl">
-        <div className="text-center">
-          <p className="font-display text-sm uppercase tracking-luxe text-rose">
-            Moments we treasure
-          </p>
-          <h2 className="text-section mt-3 font-display font-light text-ink">
-            <CalligraphyReveal text="Our Gallery" />
-          </h2>
-          <SectionDivider className="mt-6" />
-        </div>
+        <SectionHeading
+          index={4}
+          kicker="Moments we treasure"
+          kickerSi="සිහිවටන"
+          title="Our Gallery"
+        />
 
         <div className="mt-12 columns-2 gap-4 sm:columns-3 [&>*]:mb-4">
           {media.gallery.map((src, i) => (
@@ -32,14 +30,13 @@ export default function Gallery() {
                 style={{ aspectRatio: i % 3 === 1 ? "3 / 4" : "4 / 3" }}
                 aria-label="Open photo"
               >
-                <Image
+                <AnimatedImage
                   src={src}
                   alt=""
-                  fill
                   sizes="(max-width: 640px) 45vw, 30vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  variant={i}
                 />
-                <span className="absolute inset-0 bg-wine/0 transition-colors group-hover:bg-wine/15" />
+                <span className="absolute inset-0 z-10 bg-wine/0 transition-colors group-hover:bg-wine/15" />
               </button>
             </Reveal>
           ))}

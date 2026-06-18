@@ -1,25 +1,24 @@
 "use client";
 
 import { config } from "@/lib/wedding-config";
-import { Reveal, CalligraphyReveal } from "@/components/fx/Reveal";
+import { Reveal } from "@/components/fx/Reveal";
 import AnimatedIcon from "@/components/fx/AnimatedIcon";
-import SectionDivider from "@/components/fx/SectionDivider";
+import SectionHeading from "@/components/fx/SectionHeading";
 
 export default function DressCode() {
   return (
     <section className="relative overflow-hidden bg-romantic-grad px-6 py-24 sm:py-32">
       <div className="mx-auto max-w-2xl text-center">
-        <p className="font-display text-sm uppercase tracking-luxe text-rose">
-          A little note on attire
-        </p>
-        <h2 className="text-section mt-3 font-display font-light text-ink">
-          <CalligraphyReveal text="Dress Code" />
-        </h2>
-        <SectionDivider className="mt-6" />
+        <SectionHeading
+          index={6}
+          kicker="A little note on attire"
+          kickerSi="ඇඳුම් රටාව"
+          title="Dress Code"
+        />
 
         <Reveal className="mt-8">
           <div className="flex justify-center">
-            <AnimatedIcon name="heart" size={56} color="#C97B84" />
+            <AnimatedIcon name="lotus" size={56} color="#A33C2E" />
           </div>
           <p className="mt-5 font-script text-3xl rose-text">
             {config.dressCode.title}

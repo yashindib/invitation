@@ -8,27 +8,28 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Romantic blush & florals palette
-        ivory:    "#FFF8F5",   // main background, warm blush white
-        cream:    "#FDF1EC",   // section surface
-        petal:    "#F8DCD8",   // light blush panel
-        blush:    "#F4C9C9",   // blush pink
-        rose:     "#C97B84",   // dusty rose (accent)
-        wine:     "#8C4A52",   // deep wine (strong accent)
-        sage:     "#8A9A6B",   // eucalyptus greenery
-        "sage-deep": "#6E7F52",
-        gold:     "#C9A24C",   // soft gold foil
-        "gold-light": "#E2C87E",
+        // Sinhala traditional — gold & temple-flower cream palette
+        ivory:    "#FFFBF0",   // warm cream base (main bg)
+        cream:    "#FAF1DC",   // light gold cream surface
+        petal:    "#F5E6C4",   // soft saffron panel
+        blush:    "#EFD9A8",   // light gold accent
+        rose:     "#A33C2E",   // temple terracotta-maroon (accent)
+        wine:     "#6E1E1E",   // deep maroon (strong accent)
+        sage:     "#7A8B4F",   // areca / betel green
+        "sage-deep": "#5E6E3C",
+        gold:     "#C9A24C",   // brass / gold foil
+        "gold-light": "#E6CB7A",
         // Text
-        ink:      "#4A3338",   // deep mauve-brown (primary text)
-        cocoa:    "#6E5258",   // body text
-        muted:    "#8A6F73",   // captions
-        rim:      "#EAD3CE",   // soft borders
+        ink:      "#3D2A14",   // dark brown (primary text)
+        cocoa:    "#6B5230",   // body text
+        muted:    "#978049",   // captions
+        rim:      "#E8D7AE",   // soft gold borders
       },
       fontFamily: {
         script:  ["var(--font-script)", "cursive"],
         display: ["var(--font-display)", "serif"],
         body:    ["var(--font-body)", "system-ui", "sans-serif"],
+        sinhala: ["var(--font-sinhala)", "serif"],
       },
       animation: {
         "float-slow":   "float 9s ease-in-out infinite",
@@ -63,15 +64,15 @@ const config: Config = {
         },
       },
       backgroundImage: {
-        "gold-foil":     "linear-gradient(135deg,#C9A24C 0%,#E2C87E 45%,#C9A24C 100%)",
-        "blush-grad":    "linear-gradient(180deg,#FFF8F5 0%,#FDF1EC 100%)",
-        "romantic-grad": "linear-gradient(135deg,#FDF1EC 0%,#F8DCD8 50%,#FDF1EC 100%)",
+        "gold-foil":     "linear-gradient(135deg,#C9A24C 0%,#E6CB7A 45%,#C9A24C 100%)",
+        "blush-grad":    "linear-gradient(180deg,#FFFBF0 0%,#FAF1DC 100%)",
+        "romantic-grad": "linear-gradient(135deg,#FAF1DC 0%,#F5E6C4 50%,#FAF1DC 100%)",
       },
       boxShadow: {
-        rose:     "0 0 36px rgba(201,123,132,0.22)",
-        "rose-lg":"0 24px 70px rgba(140,74,82,0.18)",
-        petal:    "0 10px 40px rgba(140,74,82,0.10),inset 0 1px 0 rgba(255,255,255,0.7)",
-        seal:     "0 6px 22px rgba(140,74,82,0.45),inset 0 2px 6px rgba(255,255,255,0.25)",
+        rose:     "0 0 36px rgba(201,162,76,0.28)",
+        "rose-lg":"0 24px 70px rgba(110,30,30,0.16)",
+        petal:    "0 10px 40px rgba(110,30,30,0.10),inset 0 1px 0 rgba(255,255,255,0.7)",
+        seal:     "0 6px 22px rgba(110,30,30,0.45),inset 0 2px 6px rgba(255,255,255,0.25)",
       },
     },
   },

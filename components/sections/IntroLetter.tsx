@@ -93,19 +93,34 @@ export default function IntroLetter() {
         ref={letterRef}
         className="relative z-10 mx-auto max-w-2xl rounded-lg glass-blush px-7 py-12 text-center shadow-petal sm:px-12 sm:py-16"
       >
-        <p className="font-display text-sm uppercase tracking-luxe text-rose">
-          A letter for you
-        </p>
-        <h2 className="text-section mt-4 font-display font-light text-ink">
-          <CalligraphyReveal text="With love and joy" />
+        <p className="font-sinhala text-2xl text-wine">{config.greetingSi}</p>
+        <h2 className="text-section mt-3 font-display font-light text-ink">
+          <CalligraphyReveal text="An Invitation" />
         </h2>
         <SectionDivider className="my-7" />
+
+        {/* parents' invitation */}
+        <p className="font-display text-lg text-cocoa">{config.parents.bride}</p>
+        <p className="mt-1 font-body text-sm italic text-muted">
+          {config.parents.brideNote}
+        </p>
+        <p className="mt-5 font-script text-3xl rose-text">
+          {config.couple.bride}
+        </p>
+        <p className="my-3 font-display text-sm uppercase tracking-luxe text-gold">to</p>
+        <p className="font-script text-3xl rose-text">{config.couple.groom}</p>
+        <p className="mt-1 font-body text-sm italic text-muted">
+          {config.parents.groomNote} {config.parents.groom}
+        </p>
+
+        <div className="mx-auto my-7 h-px w-16 bg-gold/50" />
         <p className="font-body text-base leading-relaxed text-cocoa sm:text-lg">
           {config.intro}
         </p>
-        <p className="mt-8 font-script text-3xl rose-text">
-          {config.couple.bride} &amp; {config.couple.groom}
-        </p>
+
+        {/* blessing */}
+        <p className="mt-8 font-sinhala text-xl text-wine">{config.blessing.si}</p>
+        <p className="mt-2 font-body text-sm italic text-muted">{config.blessing.en}</p>
       </div>
     </section>
   );
