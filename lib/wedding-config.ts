@@ -73,6 +73,34 @@ export const config = {
     },
   ],
 
+  // Traditions / rituals showcased in the "Customs" section.
+  customs: [
+    {
+      icon: "lamp",
+      name: "Oil Lamp",
+      nameSi: "පහන",
+      text: "The ceremony opens with the lighting of the traditional brass oil lamp — invoking light, wisdom and the blessings of generations past.",
+    },
+    {
+      icon: "poruwa",
+      name: "The Poruwa",
+      nameSi: "පෝරුව",
+      text: "The couple step onto a beautifully adorned platform, a sacred threshold into married life, blessed beneath a canopy of flowers.",
+    },
+    {
+      icon: "betel",
+      name: "Betel Offering",
+      nameSi: "බුලත්",
+      text: "Sheaves of betel are offered to elders — a timeless mark of respect, gratitude and an invitation to bless the union.",
+    },
+    {
+      icon: "lotus",
+      name: "Jayamangala Gatha",
+      nameSi: "ජයමංගල ගාථා",
+      text: "Young voices chant the auspicious verses, calling lifelong joy, prosperity and harmony upon the newlyweds.",
+    },
+  ],
+
   // Ceremony schedule (icons map to AnimatedIcon names).
   schedule: [
     { time: "8:45 AM", title: "Lighting of the Oil Lamp", icon: "lamp" },

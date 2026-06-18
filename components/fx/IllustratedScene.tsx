@@ -5,6 +5,14 @@ import { useId } from "react";
 export type SceneVariant = "lamp" | "lotus" | "poruwa" | "peacock" | "couple";
 
 /**
+ * Round trig-derived coordinates to a fixed precision. Math.sin/Math.cos can
+ * differ by 1 ULP between the Node (SSR) and browser JS engines, which makes
+ * the serialized SVG attribute strings mismatch and triggers a hydration
+ * warning. Rounding makes both sides emit identical strings.
+ */
+const r = (n: number) => Math.round(n * 1000) / 1000;
+
+/**
  * A fully drawn, animated Sinhala-wedding scene used in place of a photo.
  * No real images — everything is SVG + CSS motion (flickering oil-lamp flames,
  * drifting frangipani petals, gliding hansa, shimmering peacock, swaying lotus).
@@ -199,7 +207,7 @@ function Lamp() {
           {Array.from({ length: 12 }).map((_, i) => {
             const a = (i * Math.PI) / 6;
             return (
-              <line key={i} x1={200 + Math.cos(a) * 70} y1={150 + Math.sin(a) * 70} x2={200 + Math.cos(a) * 110} y2={150 + Math.sin(a) * 110} />
+              <line key={i} x1={r(200 + Math.cos(a) * 70)} y1={r(150 + Math.sin(a) * 70)} x2={r(200 + Math.cos(a) * 110)} y2={r(150 + Math.sin(a) * 110)} />
             );
           })}
         </g>
@@ -270,8 +278,8 @@ function Poruwa() {
       <path d="M80 138 Q 200 175 320 138" fill="none" stroke="#7A8B4F" strokeWidth="3" />
       {Array.from({ length: 9 }).map((_, i) => {
         const t = i / 8;
-        const x = 80 + t * 240;
-        const y = 138 + Math.sin(Math.PI * t) * 36;
+        const x = r(80 + t * 240);
+        const y = r(138 + Math.sin(Math.PI * t) * 36);
         return <circle key={i} cx={x} cy={y} r="4" fill={i % 2 ? "#FFE7EC" : "#E6CB7A"} />;
       })}
       {/* platform */}
@@ -303,11 +311,11 @@ function Peacock() {
         {Array.from({ length: 9 }).map((_, i) => {
           const a = (-60 + i * 15) * (Math.PI / 180);
           const len = 150;
-          const ex = 150 + Math.cos(a) * len;
-          const ey = 300 + Math.sin(a) * len;
+          const ex = r(150 + Math.cos(a) * len);
+          const ey = r(300 + Math.sin(a) * len);
           return (
             <g key={i}>
-              <path d={`M150 300 Q ${150 + Math.cos(a) * 70} ${300 + Math.sin(a) * 70 - 10} ${ex} ${ey}`} fill="none" stroke="#2E7D6B" strokeWidth="2" opacity="0.8" />
+              <path d={`M150 300 Q ${r(150 + Math.cos(a) * 70)} ${r(300 + Math.sin(a) * 70 - 10)} ${ex} ${ey}`} fill="none" stroke="#2E7D6B" strokeWidth="2" opacity="0.8" />
               <ellipse className="ill-eye" cx={ex} cy={ey} rx="9" ry="13" fill="#1E8AA8" stroke="#E6CB7A" strokeWidth="1.5" style={{ animationDelay: `${i * 0.18}s` }} />
               <circle cx={ex} cy={ey} r="3.5" fill="#6E1E1E" />
             </g>
@@ -339,8 +347,8 @@ function Couple() {
       <path d="M60 200 Q 200 70 340 200" fill="none" stroke="#7A8B4F" strokeWidth="4" />
       {Array.from({ length: 13 }).map((_, i) => {
         const t = i / 12;
-        const x = 60 + t * 280;
-        const y = 200 - Math.sin(Math.PI * t) * 130;
+        const x = r(60 + t * 280);
+        const y = r(200 - Math.sin(Math.PI * t) * 130);
         return (
           <g key={i}>
             <circle cx={x} cy={y} r={i % 2 ? 6 : 4.5} fill={i % 3 === 0 ? RED : i % 3 === 1 ? "#FFE7EC" : GOLDL} />

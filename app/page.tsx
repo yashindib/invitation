@@ -5,7 +5,7 @@ import Lenis from "lenis";
 import EnvelopeIntro from "@/components/intro/EnvelopeIntro";
 import VideoHero from "@/components/hero/VideoHero";
 import IntroLetter from "@/components/sections/IntroLetter";
-import OurStory from "@/components/sections/OurStory";
+import Customs from "@/components/sections/Customs";
 import EventDetails from "@/components/sections/EventDetails";
 import Countdown from "@/components/sections/Countdown";
 import Location from "@/components/sections/Location";
@@ -58,7 +58,7 @@ export default function Home() {
       <main className="relative overflow-hidden">
         <VideoHero />
         <IntroLetter />
-        <OurStory />
+        <Customs />
         <EventDetails />
         <Countdown />
         <Location />

@@ -6,112 +6,115 @@ import { config } from "@/lib/wedding-config";
 
 /* ------------------------------------------------------------------ *
  * Full-screen ivory envelope intro.
- * The whole scene lives in one responsive SVG (viewBox 1000x1500) and
- * covers the viewport with preserveAspectRatio="xMidYMid slice", so the
- * flap, lace, seal and lettering always stay aligned and centred.
+ * The scene lives in one SVG (viewBox 1000x1500). It scales to fit the
+ * viewport with preserveAspectRatio="xMidYMid meet" so nothing is ever
+ * cropped; the ivory page background fills any side/top margins, making
+ * it read as one continuous sheet of paper.
  * ------------------------------------------------------------------ */
 
 const VB_W = 1000;
 const VB_H = 1500;
 
+// Round trig/hypot-derived coordinates so SSR and client emit identical
+// attribute strings (avoids React hydration mismatches).
+const round = (n: number) => Math.round(n * 1000) / 1000;
+
 // Flap is a downward triangle: top corners -> centre apex.
-const APEX = { x: VB_W / 2, y: 832 };
+const APEX = { x: VB_W / 2, y: 858 };
 const TL = { x: 0, y: 0 };
 const TR = { x: VB_W, y: 0 };
+const CENTROID = {
+  x: (TL.x + TR.x + APEX.x) / 3,
+  y: (TL.y + TR.y + APEX.y) / 3,
+};
 
 /**
- * Build a scalloped lace hem along the segment A→B.
- * Scallops bulge to the outer side (away from the flap's interior),
- * and small eyelet holes sit between them — broderie-anglaise style.
+ * Build a scalloped lace band that runs along the fold edge A→B.
+ * Returns a closed, fillable band shape (scalloped frill hanging just
+ * past the fold + a straight inner boundary) plus eyelet holes.
  */
 function buildLace(
   a: { x: number; y: number },
   b: { x: number; y: number },
   interior: { x: number; y: number },
   scallopR: number,
+  bandW: number,
 ) {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
   const len = Math.hypot(dx, dy);
-  const ux = dx / len; // along-edge unit
+  const ux = dx / len;
   const uy = dy / len;
 
-  // Perpendicular candidates; pick the one pointing away from interior.
-  let nx = -uy;
-  let ny = ux;
+  // inward normal (toward flap interior) and outward normal (frill side)
+  let inx = -uy;
+  let iny = ux;
   const midx = (a.x + b.x) / 2;
   const midy = (a.y + b.y) / 2;
-  if ((midx - interior.x) * nx + (midy - interior.y) * ny < 0) {
-    nx = -nx;
-    ny = -ny;
+  if ((midx - interior.x) * inx + (midy - interior.y) * iny > 0) {
+    inx = -inx;
+    iny = -iny;
   }
+  const outx = -inx;
+  const outy = -iny;
 
-  const count = Math.max(4, Math.round(len / (scallopR * 2)));
+  const count = Math.max(5, Math.round(len / (scallopR * 2)));
   const step = len / count;
-  const r = step / 2;
+  const bump = step * 0.62; // how far the frill bulges past the fold
 
-  let scallops = `M ${a.x.toFixed(1)} ${a.y.toFixed(1)}`;
-  const eyelets: { x: number; y: number; r: number }[] = [];
-
+  // outer scalloped edge: endpoints ride the fold line, controls push out
+  let d = `M ${a.x.toFixed(1)} ${a.y.toFixed(1)}`;
   for (let i = 0; i < count; i++) {
-    const sx = a.x + ux * step * i;
-    const sy = a.y + uy * step * i;
     const ex = a.x + ux * step * (i + 1);
     const ey = a.y + uy * step * (i + 1);
-    // Control point pushed outward to make a round scallop bump.
-    const mx = (sx + ex) / 2 + nx * r * 1.28;
-    const my = (sy + ey) / 2 + ny * r * 1.28;
-    scallops += ` Q ${mx.toFixed(1)} ${my.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+    const cx = a.x + ux * step * (i + 0.5) + outx * bump;
+    const cy = a.y + uy * step * (i + 0.5) + outy * bump;
+    d += ` Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+  }
+  // close along inner straight boundary
+  d += ` L ${(b.x + inx * bandW).toFixed(1)} ${(b.y + iny * bandW).toFixed(1)}`;
+  d += ` L ${(a.x + inx * bandW).toFixed(1)} ${(a.y + iny * bandW).toFixed(1)} Z`;
 
-    // eyelet inside each scallop bump
+  // eyelet holes — two rows inside the band
+  const eyelets: { x: number; y: number; r: number }[] = [];
+  for (let i = 0; i < count; i++) {
+    const t = (i + 0.5) * step;
     eyelets.push({
-      x: (sx + ex) / 2 + nx * r * 0.5,
-      y: (sy + ey) / 2 + ny * r * 0.5,
-      r: r * 0.16,
+      x: round(a.x + ux * t + inx * bandW * 0.34),
+      y: round(a.y + uy * t + iny * bandW * 0.34),
+      r: 6,
     });
+    if (i < count - 1) {
+      const t2 = (i + 1) * step;
+      eyelets.push({
+        x: round(a.x + ux * t2 + inx * bandW * 0.66),
+        y: round(a.y + uy * t2 + iny * bandW * 0.66),
+        r: 4,
+      });
+    }
   }
 
-  // Inner picot row: a tighter dotted line just inside the edge.
-  const inset = 9;
-  const dots: { x: number; y: number }[] = [];
-  const dotCount = count * 2;
-  for (let i = 0; i <= dotCount; i++) {
-    const t = i / dotCount;
-    dots.push({
-      x: a.x + ux * len * t + nx * inset,
-      y: a.y + uy * len * t + ny * inset,
-    });
-  }
-
-  return { scallops, eyelets, dots };
+  return { d, eyelets };
 }
 
-const CENTROID = {
-  x: (TL.x + TR.x + APEX.x) / 3,
-  y: (TL.y + TR.y + APEX.y) / 3,
-};
-
-const laceLeft = buildLace(TL, APEX, CENTROID, 46);
-const laceRight = buildLace(TR, APEX, CENTROID, 46);
+const laceLeft = buildLace(TL, APEX, CENTROID, 40, 96);
+const laceRight = buildLace(TR, APEX, CENTROID, 40, 96);
 
 function Sprig() {
-  // A slender engraved botanical sprig — single bloom with leaves.
   return (
     <g
       stroke="#B79A63"
-      strokeWidth="2"
+      strokeWidth="2.2"
       fill="none"
       strokeLinecap="round"
       opacity="0.85"
     >
-      <path d="M500 728 C 500 760, 500 786, 500 806" />
-      {/* bloom */}
-      <path d="M500 728 C 488 716, 486 700, 494 690 C 499 698, 500 712, 500 720" />
-      <path d="M500 728 C 512 716, 514 700, 506 690 C 501 698, 500 712, 500 720" />
-      <path d="M500 720 C 495 706, 495 694, 500 686 C 505 694, 505 706, 500 720" />
-      {/* leaves */}
-      <path d="M500 760 C 486 754, 476 758, 472 770 C 484 772, 495 770, 500 762" />
-      <path d="M500 778 C 514 772, 524 776, 528 788 C 516 790, 505 788, 500 780" />
+      <path d="M500 762 C 500 790, 500 812, 500 830" />
+      <path d="M500 762 C 489 752, 487 738, 494 729 C 499 736, 500 748, 500 756" />
+      <path d="M500 762 C 511 752, 513 738, 506 729 C 501 736, 500 748, 500 756" />
+      <path d="M500 756 C 496 744, 496 733, 500 726 C 504 733, 504 744, 500 756" />
+      <path d="M500 790 C 487 785, 478 788, 474 799 C 485 801, 495 799, 500 792" />
+      <path d="M500 806 C 513 801, 522 804, 526 815 C 515 817, 505 815, 500 808" />
     </g>
   );
 }
@@ -129,7 +132,6 @@ export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    // gentle idle breathing on the seal
     idleRef.current = gsap.to(sealRef.current, {
       scale: 1.03,
       duration: 2.4,
@@ -161,8 +163,8 @@ export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
       transformOrigin: "50% 50%",
     })
       .to(sealRef.current, {
-        y: -300,
-        scale: 0.68,
+        y: -320,
+        scale: 0.66,
         rotate: -14,
         opacity: 0,
         duration: 0.75,
@@ -170,14 +172,10 @@ export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
       })
       .to(
         flapRef.current,
-        { y: -980, opacity: 0, duration: 0.95, ease: "power2.inOut" },
+        { y: -1000, opacity: 0, duration: 0.95, ease: "power2.inOut" },
         "-=0.5",
       )
-      .to(
-        topTextRef.current,
-        { y: -220, opacity: 0, duration: 0.6 },
-        "<",
-      )
+      .to(topTextRef.current, { y: -240, opacity: 0, duration: 0.6 }, "<")
       .to(bottomTextRef.current, { opacity: 0, duration: 0.4 }, "<")
       .to(
         svgRef.current,
@@ -194,64 +192,63 @@ export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
     }
   };
 
-  const brideFirst = config.couple.bride.split(" ")[0];
+  const coupleNames = `${config.couple.bride.split(" ")[0]} & ${config.couple.groom.split(" ")[0]}`;
 
   return (
     <div
       ref={root}
-      className="fixed inset-0 z-50 overflow-hidden bg-ivory"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-ivory"
       style={{ touchAction: "manipulation" }}
     >
       <svg
         ref={svgRef}
         viewBox={`0 0 ${VB_W} ${VB_H}`}
-        preserveAspectRatio="xMidYMid slice"
+        preserveAspectRatio="xMidYMid meet"
         className="h-full w-full"
         role="img"
         aria-label="Wedding invitation envelope"
       >
         <defs>
-          <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#FFFDF6" />
-            <stop offset="55%" stopColor="#FBF4E3" />
-            <stop offset="100%" stopColor="#F3E7CC" />
-          </linearGradient>
-          <linearGradient id="flap" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id="paper" x1="0" y1="0" x2="0.4" y2="1">
             <stop offset="0%" stopColor="#FFFEFA" />
-            <stop offset="100%" stopColor="#F6EAD2" />
+            <stop offset="55%" stopColor="#FBF4E4" />
+            <stop offset="100%" stopColor="#F2E6CB" />
           </linearGradient>
-          <radialGradient id="wax" cx="40%" cy="34%" r="72%">
-            <stop offset="0%" stopColor="#FCF6E8" />
-            <stop offset="60%" stopColor="#EFE0C2" />
-            <stop offset="100%" stopColor="#DBC79C" />
+          <linearGradient id="flapFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#FFFEFB" />
+            <stop offset="100%" stopColor="#F7ECD6" />
+          </linearGradient>
+          <radialGradient id="wax" cx="40%" cy="32%" r="75%">
+            <stop offset="0%" stopColor="#FCF7EA" />
+            <stop offset="58%" stopColor="#EFE1C5" />
+            <stop offset="100%" stopColor="#D8C399" />
           </radialGradient>
-          <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="6" />
+          <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="7" />
           </filter>
         </defs>
 
-        {/* envelope body / inner paper */}
-        <rect x="0" y="0" width={VB_W} height={VB_H} fill="url(#paper)" />
-        {/* soft centre glow */}
-        <ellipse cx="500" cy="700" rx="520" ry="560" fill="#FFFDF4" opacity="0.5" filter="url(#soft)" />
+        {/* full-bleed paper */}
+        <rect x="-200" y="-200" width={VB_W + 400} height={VB_H + 400} fill="url(#paper)" />
+        <ellipse cx="500" cy="720" rx="560" ry="640" fill="#FFFEF7" opacity="0.55" filter="url(#soft)" />
 
-        {/* shadow cast by the flap onto the body */}
+        {/* shadow the flap casts on the body */}
         <path
-          d={`M${TL.x} ${TL.y} L${TR.x} ${TR.y} L${APEX.x} ${APEX.y + 18} Z`}
-          fill="#C9B488"
-          opacity="0.28"
+          d={`M${TL.x} ${TL.y} L${TR.x} ${TR.y} L${APEX.x} ${APEX.y + 26} Z`}
+          fill="#CBB68A"
+          opacity="0.3"
           filter="url(#soft)"
         />
 
-        {/* bottom lettering (on the lower body, behind the seal) */}
+        {/* bottom caption */}
         <g ref={bottomTextRef}>
-          <line x1="430" y1="1118" x2="570" y2="1118" stroke="#C9A24C" strokeWidth="1.5" opacity="0.6" />
+          <line x1="438" y1="1138" x2="562" y2="1138" stroke="#C9A24C" strokeWidth="1.5" opacity="0.55" />
           <text
             x="500"
-            y="1170"
+            y="1190"
             textAnchor="middle"
             fontFamily="var(--font-display), serif"
-            fontSize="34"
+            fontSize="32"
             letterSpacing="9"
             fill="#6B5230"
           >
@@ -259,69 +256,73 @@ export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
           </text>
         </g>
 
-        {/* ---- THE FLAP (animated open) ---- */}
+        {/* ---- FLAP (animates open) ---- */}
         <g ref={flapRef} style={{ transformBox: "fill-box", transformOrigin: "center top" }}>
-          {/* flap fill */}
           <path
             d={`M${TL.x} ${TL.y} L${TR.x} ${TR.y} L${APEX.x} ${APEX.y} Z`}
-            fill="url(#flap)"
+            fill="url(#flapFill)"
           />
 
-          {/* lace hems along both edges */}
+          {/* lace bands */}
           {[laceLeft, laceRight].map((lace, i) => (
             <g key={i}>
-              {/* scallop band fill */}
-              <path d={`${lace.scallops}`} fill="#FFFDF7" stroke="#E4D5B4" strokeWidth="1.5" />
-              {/* picot dotted row */}
-              {lace.dots.map((d, j) => (
-                <circle key={`d${j}`} cx={d.x} cy={d.y} r="2.4" fill="#E4D5B4" opacity="0.8" />
-              ))}
-              {/* eyelet holes */}
+              <path d={lace.d} fill="#FFFDF8" stroke="#E6D8B8" strokeWidth="1.4" />
               {lace.eyelets.map((e, j) => (
                 <circle
                   key={`e${j}`}
                   cx={e.x}
                   cy={e.y}
                   r={e.r}
-                  fill="#EFE2C6"
-                  stroke="#D9C7A0"
-                  strokeWidth="1"
+                  fill="#EFE2C7"
+                  stroke="#D8C6A0"
+                  strokeWidth="1.2"
                 />
               ))}
             </g>
           ))}
 
-          {/* crisp fold line down the flap edges */}
+          {/* fold lines */}
           <path
             d={`M${TL.x} ${TL.y} L${APEX.x} ${APEX.y} L${TR.x} ${TR.y}`}
             fill="none"
-            stroke="#E7D8B6"
+            stroke="#EADCBB"
             strokeWidth="1.5"
             opacity="0.7"
           />
 
-          {/* top lettering on the flap */}
+          {/* flap lettering */}
           <g ref={topTextRef}>
             <text
               x="500"
-              y="498"
+              y="500"
               textAnchor="middle"
               fontFamily="var(--font-display), serif"
-              fontSize="33"
-              letterSpacing="8"
+              fontSize="30"
+              letterSpacing="7"
               fill="#6B5230"
             >
-              A LOVE LETTER FROM
+              TOGETHER WITH THEIR FAMILIES
             </text>
             <text
               x="500"
-              y="608"
+              y="616"
               textAnchor="middle"
               fontFamily="var(--font-script), cursive"
-              fontSize="118"
+              fontSize="84"
               fill="#5E4422"
             >
-              {brideFirst}
+              {coupleNames}
+            </text>
+            <text
+              x="500"
+              y="668"
+              textAnchor="middle"
+              fontFamily="var(--font-display), serif"
+              fontSize="26"
+              letterSpacing="6"
+              fill="#6B5230"
+            >
+              INVITE YOU TO THEIR WEDDING
             </text>
           </g>
         </g>
@@ -336,48 +337,44 @@ export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
           aria-label="Open the invitation"
           style={{ cursor: "pointer", transformBox: "fill-box", transformOrigin: "center" }}
         >
-          {/* generous invisible hit area */}
-          <rect x="350" y="680" width="300" height="320" fill="transparent" />
-          {/* glow */}
-          <ellipse cx="500" cy="832" rx="150" ry="178" fill="#E9D7AC" opacity="0.5" filter="url(#soft)" />
-          {/* scalloped oval rim */}
-          <g>
-            {Array.from({ length: 30 }).map((_, i) => {
-              const a = (i / 30) * Math.PI * 2;
-              return (
-                <circle
-                  key={i}
-                  cx={500 + Math.cos(a) * 122}
-                  cy={832 + Math.sin(a) * 148}
-                  r="13"
-                  fill="url(#wax)"
-                />
-              );
-            })}
-          </g>
-          {/* seal body */}
-          <ellipse cx="500" cy="832" rx="122" ry="148" fill="url(#wax)" />
+          <rect x="372" y="722" width="256" height="290" fill="transparent" />
+          <ellipse cx="500" cy="858" rx="132" ry="158" fill="#E8D6AB" opacity="0.5" filter="url(#soft)" />
+
+          {/* fine scalloped rim */}
+          {Array.from({ length: 34 }).map((_, i) => {
+            const a = (i / 34) * Math.PI * 2;
+            return (
+              <circle
+                key={i}
+                cx={round(500 + Math.cos(a) * 104)}
+                cy={round(858 + Math.sin(a) * 128)}
+                r="10"
+                fill="url(#wax)"
+              />
+            );
+          })}
+
+          <ellipse cx="500" cy="858" rx="104" ry="128" fill="url(#wax)" />
           <ellipse
             cx="500"
-            cy="832"
-            rx="104"
-            ry="128"
+            cy="858"
+            rx="88"
+            ry="110"
             fill="none"
             stroke="#CBB585"
-            strokeWidth="2"
+            strokeWidth="1.8"
             opacity="0.7"
           />
-          {/* highlight */}
-          <ellipse cx="465" cy="780" rx="40" ry="30" fill="#FFFDF6" opacity="0.45" filter="url(#soft)" />
+          <ellipse cx="470" cy="812" rx="34" ry="26" fill="#FFFDF6" opacity="0.4" filter="url(#soft)" />
 
           <Sprig />
 
           <text
             x="500"
-            y="900"
+            y="918"
             textAnchor="middle"
             fontFamily="var(--font-display), serif"
-            fontSize="44"
+            fontSize="40"
             letterSpacing="3"
             fontWeight="600"
             fill="#8C7338"
