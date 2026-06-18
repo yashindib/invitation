@@ -31,13 +31,7 @@ export default function Customs() {
         {/* featured: bride & groom illustration, then the heritage note */}
         <div className="mt-12 flex flex-col items-center gap-10">
           <Reveal y={50}>
-            <div className="relative mx-auto w-full max-w-md">
-              {/* draped garland above the couple */}
-              <Motif
-                name="garland"
-                className="absolute -top-8 left-1/2 z-10 w-28 -translate-x-1/2"
-                float
-              />
+            <div className="mx-auto w-full max-w-md">
               <Image
                 src="/couple-heritage.png"
                 alt="Illustrated bride in a red-and-gold osariya and groom in traditional Kandyan attire, holding hands"
