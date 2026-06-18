@@ -3,7 +3,8 @@
 import { config } from "@/lib/wedding-config";
 import { Reveal } from "@/components/fx/Reveal";
 import SectionHeading from "@/components/fx/SectionHeading";
-import IllustratedScene from "@/components/fx/IllustratedScene";
+import PetalField from "@/components/fx/PetalField";
+import { Motif } from "@/components/fx/Motif";
 
 export default function Location() {
   return (
@@ -18,8 +19,9 @@ export default function Location() {
 
         <div className="mt-12 grid items-center gap-8 sm:grid-cols-2">
           <Reveal y={50}>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-rose-lg">
-              <IllustratedScene variant="couple" />
+            <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-romantic-grad shadow-rose-lg ring-1 ring-rim">
+              <PetalField density={6} />
+              <Motif name="poruwa" className="relative z-10 w-2/3 max-w-[260px]" float />
             </div>
           </Reveal>
 

@@ -6,6 +6,7 @@ import { config } from "@/lib/wedding-config";
 import { Bird } from "@/components/fx/FlyingBirds";
 import { CalligraphyReveal } from "@/components/fx/Reveal";
 import SectionDivider from "@/components/fx/SectionDivider";
+import { MotifFrame } from "@/components/fx/Motif";
 import { prefersReducedMotion } from "@/lib/utils";
 
 export default function IntroLetter() {
@@ -93,7 +94,15 @@ export default function IntroLetter() {
         ref={letterRef}
         className="relative z-10 mx-auto max-w-2xl rounded-lg glass-blush px-7 py-12 text-center shadow-petal sm:px-12 sm:py-16"
       >
-        <p className="font-sinhala text-2xl text-wine">{config.greetingSi}</p>
+        {/* lotus-wreath monogram */}
+        <MotifFrame frame="frame1" className="mx-auto aspect-square w-44 sm:w-52" padding="26%">
+          <p className="font-script text-3xl rose-text">{config.couple.initials}</p>
+          <p className="mt-1 font-display text-[0.6rem] uppercase tracking-luxe text-muted">
+            {config.dateShort}
+          </p>
+        </MotifFrame>
+
+        <p className="mt-6 font-sinhala text-2xl text-wine">{config.greetingSi}</p>
         <h2 className="text-section mt-3 font-display font-light text-ink">
           <CalligraphyReveal text="An Invitation" />
         </h2>

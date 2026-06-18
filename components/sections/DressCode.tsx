@@ -2,8 +2,8 @@
 
 import { config } from "@/lib/wedding-config";
 import { Reveal } from "@/components/fx/Reveal";
-import AnimatedIcon from "@/components/fx/AnimatedIcon";
 import SectionHeading from "@/components/fx/SectionHeading";
+import { Motif, MotifFrame } from "@/components/fx/Motif";
 
 export default function DressCode() {
   return (
@@ -17,9 +17,9 @@ export default function DressCode() {
         />
 
         <Reveal className="mt-8">
-          <div className="flex justify-center">
-            <AnimatedIcon name="lotus" size={56} color="#A33C2E" />
-          </div>
+          <MotifFrame frame="frame3" className="mx-auto aspect-square w-40 sm:w-48" padding="30%">
+            <Motif name="lotus" className="w-14" float />
+          </MotifFrame>
           <p className="mt-5 font-script text-3xl rose-text">
             {config.dressCode.title}
           </p>
@@ -37,6 +37,13 @@ export default function DressCode() {
                 aria-hidden="true"
               />
             ))}
+          </div>
+
+          {/* paired garlands */}
+          <div className="mt-10 flex items-center justify-center gap-6">
+            <Motif name="garland" className="w-20 opacity-90" float />
+            <Motif name="pot" className="w-12 opacity-90" float />
+            <Motif name="garland" className="w-20 opacity-90" float />
           </div>
         </Reveal>
       </div>

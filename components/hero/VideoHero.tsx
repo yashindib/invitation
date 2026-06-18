@@ -7,6 +7,7 @@ import { media } from "@/lib/media";
 import FlyingBirds from "@/components/fx/FlyingBirds";
 import PetalField from "@/components/fx/PetalField";
 import IllustratedScene from "@/components/fx/IllustratedScene";
+import { Motif } from "@/components/fx/Motif";
 
 export default function VideoHero() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -65,6 +66,13 @@ export default function VideoHero() {
 
       {/* content */}
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-ivory">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.1 }}
+        >
+          <Motif name="lotus" className="mb-3 w-14 drop-shadow-[0_4px_16px_rgba(0,0,0,0.4)] sm:w-16" float />
+        </motion.div>
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}

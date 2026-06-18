@@ -4,6 +4,7 @@ import { config } from "@/lib/wedding-config";
 import { Reveal } from "@/components/fx/Reveal";
 import AnimatedIcon, { IconName } from "@/components/fx/AnimatedIcon";
 import SectionHeading from "@/components/fx/SectionHeading";
+import { Motif } from "@/components/fx/Motif";
 
 function VenueCard({
   label,
@@ -58,10 +59,12 @@ export default function EventDetails() {
               }}
             />
             <div className="relative">
-              <div className="flex justify-center">
-                <AnimatedIcon name="lamp" size={56} color="#E6CB7A" />
+              <div className="flex items-end justify-center gap-5 sm:gap-8">
+                <Motif name="lamp" className="w-10 sm:w-12" float />
+                <Motif name="lamp" className="w-14 sm:w-20" float priority />
+                <Motif name="lamp" className="w-10 sm:w-12" float />
               </div>
-              <p className="mt-4 font-sinhala text-2xl text-gold-light">
+              <p className="mt-5 font-sinhala text-2xl text-gold-light">
                 {config.nekath.labelSi}
               </p>
               <p className="mt-1 font-display text-xs uppercase tracking-luxe text-ivory/70">

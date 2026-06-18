@@ -6,6 +6,7 @@ import { getTimeLeft, type TimeLeft } from "@/lib/utils";
 import { CalligraphyReveal } from "@/components/fx/Reveal";
 import Fireflies from "@/components/fx/Fireflies";
 import SectionDivider from "@/components/fx/SectionDivider";
+import { Motif } from "@/components/fx/Motif";
 
 function Unit({ value, label }: { value: number; label: string }) {
   return (
@@ -36,6 +37,7 @@ export default function Countdown() {
     <section className="relative overflow-hidden bg-wine px-6 py-24 text-ivory sm:py-32">
       <Fireflies density={16} />
       <div className="relative z-10 mx-auto max-w-3xl text-center">
+        <Motif name="garland" className="mx-auto mb-6 w-28 sm:w-32" float />
         <p className="font-sinhala text-2xl text-gold-light">තව දින</p>
         <p className="mt-2 font-display text-sm uppercase tracking-luxe text-ivory/70">
           Counting down
