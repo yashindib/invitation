@@ -1,10 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { config } from "@/lib/wedding-config";
 import { Reveal } from "@/components/fx/Reveal";
 import SectionHeading from "@/components/fx/SectionHeading";
 import PetalField from "@/components/fx/PetalField";
-import { Motif } from "@/components/fx/Motif";
 
 export default function Location() {
   return (
@@ -19,9 +19,17 @@ export default function Location() {
 
         <div className="mt-12 grid items-center gap-8 sm:grid-cols-2">
           <Reveal y={50}>
-            <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-romantic-grad shadow-rose-lg ring-1 ring-rim">
+            <div className="relative mx-auto flex w-full max-w-md items-center justify-center">
               <PetalField density={6} />
-              <Motif name="poruwa" className="relative z-10 w-2/3 max-w-[260px]" float />
+              <Image
+                src="/couple-formal.png"
+                alt="Illustrated bride in a white gown and groom in a navy suit, holding hands"
+                width={1408}
+                height={768}
+                sizes="(min-width: 640px) 28rem, 90vw"
+                className="relative z-10 h-auto w-full object-contain animate-float-medium"
+                priority
+              />
             </div>
           </Reveal>
 

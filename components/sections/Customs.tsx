@@ -28,32 +28,31 @@ export default function Customs() {
           title="Our Customs"
         />
 
-        {/* featured: bride & groom + heritage note */}
-        <div className="mt-12 grid items-center gap-10 sm:grid-cols-2">
+        {/* featured: bride & groom illustration, then the heritage note */}
+        <div className="mt-12 flex flex-col items-center gap-10">
           <Reveal y={50}>
-            <div className="relative mx-auto w-full max-w-sm">
-              {/* draped garland above the portrait */}
+            <div className="relative mx-auto w-full max-w-md">
+              {/* draped garland above the couple */}
               <Motif
                 name="garland"
                 className="absolute -top-8 left-1/2 z-10 w-28 -translate-x-1/2"
                 float
               />
-              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-ivory shadow-rose-lg ring-1 ring-rim">
-                <Image
-                  src="/couple-heritage.png"
-                  alt="Illustrated bride in a red-and-gold osariya and groom in traditional Kandyan attire, holding hands"
-                  fill
-                  sizes="(min-width: 640px) 42vw, 88vw"
-                  className="object-contain p-5"
-                  priority
-                />
-              </div>
+              <Image
+                src="/couple-heritage.png"
+                alt="Illustrated bride in a red-and-gold osariya and groom in traditional Kandyan attire, holding hands"
+                width={1408}
+                height={768}
+                sizes="(min-width: 1040px) 28rem, 90vw"
+                className="h-auto w-full object-contain"
+                priority
+              />
             </div>
           </Reveal>
 
           <Reveal delay={0.12}>
-            <div className="text-center sm:text-left">
-              <Motif name="pot" className="mx-auto mb-4 w-16 sm:mx-0" float />
+            <div className="mx-auto max-w-xl text-center">
+              <Motif name="pot" className="mx-auto mb-4 w-16" float />
               <p className="font-sinhala text-2xl text-wine">සම්ප්‍රදාය</p>
               <h3 className="mt-2 font-display text-2xl font-medium text-ink sm:text-3xl">
                 A celebration steeped in heritage
