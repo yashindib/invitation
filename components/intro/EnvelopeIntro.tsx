@@ -3,90 +3,188 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { config } from "@/lib/wedding-config";
-import PetalField from "@/components/fx/PetalField";
 
-/** A modern gold lotus medallion (punkalasa-inspired) — the tap target. */
-function SealMedallion({ initials }: { initials: string }) {
+/* ------------------------------------------------------------------ *
+ * Full-screen ivory envelope intro.
+ * The whole scene lives in one responsive SVG (viewBox 1000x1500) and
+ * covers the viewport with preserveAspectRatio="xMidYMid slice", so the
+ * flap, lace, seal and lettering always stay aligned and centred.
+ * ------------------------------------------------------------------ */
+
+const VB_W = 1000;
+const VB_H = 1500;
+
+// Flap is a downward triangle: top corners -> centre apex.
+const APEX = { x: VB_W / 2, y: 832 };
+const TL = { x: 0, y: 0 };
+const TR = { x: VB_W, y: 0 };
+
+/**
+ * Build a scalloped lace hem along the segment A→B.
+ * Scallops bulge to the outer side (away from the flap's interior),
+ * and small eyelet holes sit between them — broderie-anglaise style.
+ */
+function buildLace(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+  interior: { x: number; y: number },
+  scallopR: number,
+) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy);
+  const ux = dx / len; // along-edge unit
+  const uy = dy / len;
+
+  // Perpendicular candidates; pick the one pointing away from interior.
+  let nx = -uy;
+  let ny = ux;
+  const midx = (a.x + b.x) / 2;
+  const midy = (a.y + b.y) / 2;
+  if ((midx - interior.x) * nx + (midy - interior.y) * ny < 0) {
+    nx = -nx;
+    ny = -ny;
+  }
+
+  const count = Math.max(4, Math.round(len / (scallopR * 2)));
+  const step = len / count;
+  const r = step / 2;
+
+  let scallops = `M ${a.x.toFixed(1)} ${a.y.toFixed(1)}`;
+  const eyelets: { x: number; y: number; r: number }[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const sx = a.x + ux * step * i;
+    const sy = a.y + uy * step * i;
+    const ex = a.x + ux * step * (i + 1);
+    const ey = a.y + uy * step * (i + 1);
+    // Control point pushed outward to make a round scallop bump.
+    const mx = (sx + ex) / 2 + nx * r * 1.28;
+    const my = (sy + ey) / 2 + ny * r * 1.28;
+    scallops += ` Q ${mx.toFixed(1)} ${my.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+
+    // eyelet inside each scallop bump
+    eyelets.push({
+      x: (sx + ex) / 2 + nx * r * 0.5,
+      y: (sy + ey) / 2 + ny * r * 0.5,
+      r: r * 0.16,
+    });
+  }
+
+  // Inner picot row: a tighter dotted line just inside the edge.
+  const inset = 9;
+  const dots: { x: number; y: number }[] = [];
+  const dotCount = count * 2;
+  for (let i = 0; i <= dotCount; i++) {
+    const t = i / dotCount;
+    dots.push({
+      x: a.x + ux * len * t + nx * inset,
+      y: a.y + uy * len * t + ny * inset,
+    });
+  }
+
+  return { scallops, eyelets, dots };
+}
+
+const CENTROID = {
+  x: (TL.x + TR.x + APEX.x) / 3,
+  y: (TL.y + TR.y + APEX.y) / 3,
+};
+
+const laceLeft = buildLace(TL, APEX, CENTROID, 46);
+const laceRight = buildLace(TR, APEX, CENTROID, 46);
+
+function Sprig() {
+  // A slender engraved botanical sprig — single bloom with leaves.
   return (
-    <svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
-      <defs>
-        <radialGradient id="foil" cx="38%" cy="30%" r="80%">
-          <stop offset="0%" stopColor="#F0DCA0" />
-          <stop offset="55%" stopColor="#C9A24C" />
-          <stop offset="100%" stopColor="#9A7A2E" />
-        </radialGradient>
-      </defs>
-      {/* foil disc */}
-      <circle cx="60" cy="60" r="54" fill="url(#foil)" stroke="#6E1E1E" strokeWidth="1.5" />
-      <circle cx="60" cy="60" r="46" fill="none" stroke="#6E1E1E" strokeWidth="1" opacity="0.4" />
-      {/* eight lotus petals around the rim (punkalasa rays) */}
-      <g stroke="#6E1E1E" strokeWidth="1" opacity="0.45" fill="none">
-        {Array.from({ length: 8 }).map((_, i) => {
-          const a = (i * Math.PI) / 4;
-          const x = 60 + Math.cos(a) * 40;
-          const y = 60 + Math.sin(a) * 40;
-          const x2 = 60 + Math.cos(a) * 47;
-          const y2 = 60 + Math.sin(a) * 47;
-          return <line key={i} x1={x} y1={y} x2={x2} y2={y2} />;
-        })}
-      </g>
-      {/* minimal lotus above the monogram */}
-      <path d="M60 30 C 56 38, 56 46, 60 52 C 64 46, 64 38, 60 30 Z" fill="none" stroke="#6E1E1E" strokeWidth="1.4" opacity="0.7" />
-      <text
-        x="60"
-        y="78"
-        textAnchor="middle"
-        fontFamily="var(--font-display), serif"
-        fontSize="24"
-        fontWeight="600"
-        fill="#6E1E1E"
-        style={{ letterSpacing: "1px" }}
-      >
-        {initials}
-      </text>
-    </svg>
+    <g
+      stroke="#B79A63"
+      strokeWidth="2"
+      fill="none"
+      strokeLinecap="round"
+      opacity="0.85"
+    >
+      <path d="M500 728 C 500 760, 500 786, 500 806" />
+      {/* bloom */}
+      <path d="M500 728 C 488 716, 486 700, 494 690 C 499 698, 500 712, 500 720" />
+      <path d="M500 728 C 512 716, 514 700, 506 690 C 501 698, 500 712, 500 720" />
+      <path d="M500 720 C 495 706, 495 694, 500 686 C 505 694, 505 706, 500 720" />
+      {/* leaves */}
+      <path d="M500 760 C 486 754, 476 758, 472 770 C 484 772, 495 770, 500 762" />
+      <path d="M500 778 C 514 772, 524 776, 528 788 C 516 790, 505 788, 500 780" />
+    </g>
   );
 }
 
 export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
   const root = useRef<HTMLDivElement>(null);
-  const sealRef = useRef<HTMLButtonElement>(null);
-  const flapRef = useRef<HTMLDivElement>(null);
-  const letterRef = useRef<HTMLDivElement>(null);
-  const envRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const flapRef = useRef<SVGGElement>(null);
+  const sealRef = useRef<SVGGElement>(null);
+  const topTextRef = useRef<SVGGElement>(null);
+  const bottomTextRef = useRef<SVGGElement>(null);
+  const idleRef = useRef<gsap.core.Tween | null>(null);
   const [opening, setOpening] = useState(false);
 
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // gentle idle breathing on the seal
+    idleRef.current = gsap.to(sealRef.current, {
+      scale: 1.03,
+      duration: 2.4,
+      ease: "sine.inOut",
+      yoyo: true,
+      repeat: -1,
+      transformOrigin: "50% 50%",
+    });
     return () => {
       document.body.style.overflow = prev;
+      idleRef.current?.kill();
     };
   }, []);
 
   const handleOpen = () => {
     if (opening) return;
     setOpening(true);
+    idleRef.current?.kill();
 
     const tl = gsap.timeline({
       defaults: { ease: "power3.inOut" },
       onComplete: onOpen,
     });
 
-    tl
-      .to(sealRef.current, { scale: 1.12, duration: 0.22, ease: "power2.out" })
+    tl.to(sealRef.current, {
+      scale: 1.12,
+      duration: 0.24,
+      ease: "power2.out",
+      transformOrigin: "50% 50%",
+    })
       .to(sealRef.current, {
-        y: -120,
-        scale: 0.7,
+        y: -300,
+        scale: 0.68,
+        rotate: -14,
         opacity: 0,
-        rotate: -18,
-        duration: 0.7,
+        duration: 0.75,
+        transformOrigin: "50% 50%",
       })
-      .to(flapRef.current, { rotateX: -172, duration: 0.9, ease: "power2.inOut" }, "-=0.35")
-      .set(flapRef.current, { zIndex: 1 })
-      .to(letterRef.current, { y: "-58%", scale: 1.04, duration: 1.0, ease: "power3.out" }, "-=0.3")
-      .to(envRef.current, { scale: 1.18, duration: 0.9, ease: "power2.in" }, "+=0.25")
-      .to(root.current, { opacity: 0, duration: 0.7, ease: "power2.inOut" }, "<0.1");
+      .to(
+        flapRef.current,
+        { y: -980, opacity: 0, duration: 0.95, ease: "power2.inOut" },
+        "-=0.5",
+      )
+      .to(
+        topTextRef.current,
+        { y: -220, opacity: 0, duration: 0.6 },
+        "<",
+      )
+      .to(bottomTextRef.current, { opacity: 0, duration: 0.4 }, "<")
+      .to(
+        svgRef.current,
+        { scale: 1.16, duration: 0.9, ease: "power2.in", transformOrigin: "50% 50%" },
+        "-=0.55",
+      )
+      .to(root.current, { opacity: 0, duration: 0.6, ease: "power2.inOut" }, "<0.1");
   };
 
   const onKey = (e: React.KeyboardEvent) => {
@@ -96,116 +194,198 @@ export default function EnvelopeIntro({ onOpen }: { onOpen: () => void }) {
     }
   };
 
+  const brideFirst = config.couple.bride.split(" ")[0];
+
   return (
     <div
       ref={root}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-romantic-grad"
+      className="fixed inset-0 z-50 overflow-hidden bg-ivory"
+      style={{ touchAction: "manipulation" }}
     >
-      <PetalField density={12} />
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${VB_W} ${VB_H}`}
+        preserveAspectRatio="xMidYMid slice"
+        className="h-full w-full"
+        role="img"
+        aria-label="Wedding invitation envelope"
+      >
+        <defs>
+          <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#FFFDF6" />
+            <stop offset="55%" stopColor="#FBF4E3" />
+            <stop offset="100%" stopColor="#F3E7CC" />
+          </linearGradient>
+          <linearGradient id="flap" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#FFFEFA" />
+            <stop offset="100%" stopColor="#F6EAD2" />
+          </linearGradient>
+          <radialGradient id="wax" cx="40%" cy="34%" r="72%">
+            <stop offset="0%" stopColor="#FCF6E8" />
+            <stop offset="60%" stopColor="#EFE0C2" />
+            <stop offset="100%" stopColor="#DBC79C" />
+          </radialGradient>
+          <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
+        </defs>
 
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(circle at 50% 42%, rgba(245,230,196,0.75), transparent 62%)",
-        }}
-      />
+        {/* envelope body / inner paper */}
+        <rect x="0" y="0" width={VB_W} height={VB_H} fill="url(#paper)" />
+        {/* soft centre glow */}
+        <ellipse cx="500" cy="700" rx="520" ry="560" fill="#FFFDF4" opacity="0.5" filter="url(#soft)" />
 
-      <p className="mb-1 font-sinhala text-2xl text-wine sm:text-3xl">
-        {config.greetingSi}
-      </p>
-      <p className="mb-7 font-display text-xs uppercase tracking-luxe text-muted">
-        {config.invitationSi} &middot; Wedding Invitation
-      </p>
+        {/* shadow cast by the flap onto the body */}
+        <path
+          d={`M${TL.x} ${TL.y} L${TR.x} ${TR.y} L${APEX.x} ${APEX.y + 18} Z`}
+          fill="#C9B488"
+          opacity="0.28"
+          filter="url(#soft)"
+        />
 
-      {/* Envelope scene */}
-      <div ref={envRef} className="relative" style={{ perspective: "1400px" }}>
-        <div
-          className="relative"
-          style={{ width: "min(82vw, 360px)", aspectRatio: "3 / 2", transformStyle: "preserve-3d" }}
+        {/* bottom lettering (on the lower body, behind the seal) */}
+        <g ref={bottomTextRef}>
+          <line x1="430" y1="1118" x2="570" y2="1118" stroke="#C9A24C" strokeWidth="1.5" opacity="0.6" />
+          <text
+            x="500"
+            y="1170"
+            textAnchor="middle"
+            fontFamily="var(--font-display), serif"
+            fontSize="34"
+            letterSpacing="9"
+            fill="#6B5230"
+          >
+            OPEN THE INVITATION
+          </text>
+        </g>
+
+        {/* ---- THE FLAP (animated open) ---- */}
+        <g ref={flapRef} style={{ transformBox: "fill-box", transformOrigin: "center top" }}>
+          {/* flap fill */}
+          <path
+            d={`M${TL.x} ${TL.y} L${TR.x} ${TR.y} L${APEX.x} ${APEX.y} Z`}
+            fill="url(#flap)"
+          />
+
+          {/* lace hems along both edges */}
+          {[laceLeft, laceRight].map((lace, i) => (
+            <g key={i}>
+              {/* scallop band fill */}
+              <path d={`${lace.scallops}`} fill="#FFFDF7" stroke="#E4D5B4" strokeWidth="1.5" />
+              {/* picot dotted row */}
+              {lace.dots.map((d, j) => (
+                <circle key={`d${j}`} cx={d.x} cy={d.y} r="2.4" fill="#E4D5B4" opacity="0.8" />
+              ))}
+              {/* eyelet holes */}
+              {lace.eyelets.map((e, j) => (
+                <circle
+                  key={`e${j}`}
+                  cx={e.x}
+                  cy={e.y}
+                  r={e.r}
+                  fill="#EFE2C6"
+                  stroke="#D9C7A0"
+                  strokeWidth="1"
+                />
+              ))}
+            </g>
+          ))}
+
+          {/* crisp fold line down the flap edges */}
+          <path
+            d={`M${TL.x} ${TL.y} L${APEX.x} ${APEX.y} L${TR.x} ${TR.y}`}
+            fill="none"
+            stroke="#E7D8B6"
+            strokeWidth="1.5"
+            opacity="0.7"
+          />
+
+          {/* top lettering on the flap */}
+          <g ref={topTextRef}>
+            <text
+              x="500"
+              y="498"
+              textAnchor="middle"
+              fontFamily="var(--font-display), serif"
+              fontSize="33"
+              letterSpacing="8"
+              fill="#6B5230"
+            >
+              A LOVE LETTER FROM
+            </text>
+            <text
+              x="500"
+              y="608"
+              textAnchor="middle"
+              fontFamily="var(--font-script), cursive"
+              fontSize="118"
+              fill="#5E4422"
+            >
+              {brideFirst}
+            </text>
+          </g>
+        </g>
+
+        {/* ---- WAX SEAL (tap target) ---- */}
+        <g
+          ref={sealRef}
+          onClick={handleOpen}
+          onKeyDown={onKey}
+          role="button"
+          tabIndex={0}
+          aria-label="Open the invitation"
+          style={{ cursor: "pointer", transformBox: "fill-box", transformOrigin: "center" }}
         >
-          {/* envelope back */}
-          <div className="absolute inset-0 rounded-md bg-petal shadow-rose-lg" />
+          {/* generous invisible hit area */}
+          <rect x="350" y="680" width="300" height="320" fill="transparent" />
+          {/* glow */}
+          <ellipse cx="500" cy="832" rx="150" ry="178" fill="#E9D7AC" opacity="0.5" filter="url(#soft)" />
+          {/* scalloped oval rim */}
+          <g>
+            {Array.from({ length: 30 }).map((_, i) => {
+              const a = (i / 30) * Math.PI * 2;
+              return (
+                <circle
+                  key={i}
+                  cx={500 + Math.cos(a) * 122}
+                  cy={832 + Math.sin(a) * 148}
+                  r="13"
+                  fill="url(#wax)"
+                />
+              );
+            })}
+          </g>
+          {/* seal body */}
+          <ellipse cx="500" cy="832" rx="122" ry="148" fill="url(#wax)" />
+          <ellipse
+            cx="500"
+            cy="832"
+            rx="104"
+            ry="128"
+            fill="none"
+            stroke="#CBB585"
+            strokeWidth="2"
+            opacity="0.7"
+          />
+          {/* highlight */}
+          <ellipse cx="465" cy="780" rx="40" ry="30" fill="#FFFDF6" opacity="0.45" filter="url(#soft)" />
 
-          {/* letter */}
-          <div
-            ref={letterRef}
-            className="absolute left-[6%] right-[6%] top-[8%] z-10 rounded-sm bg-ivory px-5 py-6 text-center shadow-petal"
-            style={{ height: "92%" }}
+          <Sprig />
+
+          <text
+            x="500"
+            y="900"
+            textAnchor="middle"
+            fontFamily="var(--font-display), serif"
+            fontSize="44"
+            letterSpacing="3"
+            fontWeight="600"
+            fill="#8C7338"
           >
-            <div className="mx-auto mb-3 h-px w-12 bg-gold/60" />
-            <p className="font-display text-xs uppercase tracking-luxe text-muted">
-              Save the Date
-            </p>
-            <p className="mt-3 font-script text-2xl rose-text">
-              {config.couple.bride.split(" ")[0]} &amp; {config.couple.groom.split(" ")[0]}
-            </p>
-            <p className="mt-2 font-sinhala text-sm text-wine">
-              {config.couple.brideSi} &amp; {config.couple.groomSi}
-            </p>
-            <p className="mt-2 font-display text-sm text-cocoa">{config.dateShort}</p>
-            <div className="mx-auto mt-3 h-px w-12 bg-gold/60" />
-          </div>
-
-          {/* envelope front pocket — cream with gold seam */}
-          <div
-            className="absolute inset-0 z-30 overflow-hidden rounded-md"
-            style={{
-              clipPath: "polygon(0 38%, 50% 100%, 100% 38%, 100% 100%, 0 100%)",
-              background: "linear-gradient(155deg,#F7E7BE,#EAD7A6)",
-              boxShadow: "inset 0 2px 10px rgba(110,30,30,0.14)",
-            }}
-          />
-          <div
-            className="pointer-events-none absolute inset-0 z-30"
-            style={{
-              background:
-                "linear-gradient(135deg, transparent 49.6%, rgba(201,162,76,0.5) 50%, transparent 50.4%), linear-gradient(225deg, transparent 49.6%, rgba(201,162,76,0.5) 50%, transparent 50.4%)",
-              clipPath: "polygon(0 38%, 50% 100%, 100% 38%, 100% 100%, 0 100%)",
-            }}
-          />
-
-          {/* flap */}
-          <div
-            ref={flapRef}
-            className="absolute inset-x-0 top-0 z-40"
-            style={{
-              height: "62%",
-              transformOrigin: "top center",
-              transformStyle: "preserve-3d",
-              clipPath: "polygon(0 0, 100% 0, 50% 100%)",
-              background: "linear-gradient(155deg,#F4E2B4,#E6CB7A)",
-              boxShadow: "0 6px 14px rgba(110,30,30,0.14)",
-            }}
-          />
-
-          {/* seal medallion — tap target */}
-          <button
-            ref={sealRef}
-            onClick={handleOpen}
-            onKeyDown={onKey}
-            aria-label="Open the invitation"
-            className="group absolute left-1/2 top-[46%] z-50 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full shadow-seal transition-transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-wine"
-            style={{
-              width: "clamp(72px, 22vw, 104px)",
-              height: "clamp(72px, 22vw, 104px)",
-              touchAction: "manipulation",
-            }}
-          >
-            <span
-              className="absolute inset-0 animate-pulse-soft rounded-full"
-              style={{ boxShadow: "0 0 22px rgba(201,162,76,0.5)" }}
-            />
-            <SealMedallion initials={config.couple.initials} />
-          </button>
-        </div>
-      </div>
-
-      {!opening && (
-        <p className="mt-10 animate-pulse-soft font-display text-sm uppercase tracking-luxe text-wine">
-          Tap the seal to open
-        </p>
-      )}
+            {config.couple.initials}
+          </text>
+        </g>
+      </svg>
     </div>
   );
 }

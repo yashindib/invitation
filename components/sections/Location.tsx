@@ -19,7 +19,7 @@ export default function Location() {
         <div className="mt-12 grid items-center gap-8 sm:grid-cols-2">
           <Reveal y={50}>
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-rose-lg">
-              <IllustratedScene variant="peacock" />
+              <IllustratedScene variant="couple" />
             </div>
           </Reveal>
 

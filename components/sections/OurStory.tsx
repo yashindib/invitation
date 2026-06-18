@@ -6,7 +6,7 @@ import SectionHeading from "@/components/fx/SectionHeading";
 import PetalField from "@/components/fx/PetalField";
 import IllustratedScene, { SceneVariant } from "@/components/fx/IllustratedScene";
 
-const STORY_SCENES: SceneVariant[] = ["lotus", "poruwa", "lamp"];
+const STORY_SCENES: SceneVariant[] = ["lotus", "couple", "lamp"];
 
 export default function OurStory() {
   return (

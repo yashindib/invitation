@@ -2,7 +2,7 @@
 
 import { useId } from "react";
 
-export type SceneVariant = "lamp" | "lotus" | "poruwa" | "peacock";
+export type SceneVariant = "lamp" | "lotus" | "poruwa" | "peacock" | "couple";
 
 /**
  * A fully drawn, animated Sinhala-wedding scene used in place of a photo.
@@ -26,9 +26,13 @@ export default function IllustratedScene({
     lotus: ["#FBEFD0", "#F2D6A8", "#E6B98A"],
     poruwa: ["#6E1E1E", "#9A4A2E", "#E6CB7A"],
     peacock: ["#15324A", "#2C5E6E", "#7FA98F"],
+    couple: ["#FBEFD0", "#F4D9C2", "#E2B58A"],
   };
   const [s0, s1, s2] = skyStops[variant];
-  const petalTone = variant === "lotus" || variant === "poruwa" ? "#FFF7E6" : "#E6CB7A";
+  const petalTone =
+    variant === "lotus" || variant === "poruwa" || variant === "couple"
+      ? "#FFF7E6"
+      : "#E6CB7A";
 
   return (
     <div className={`absolute inset-0 overflow-hidden ${className}`} aria-hidden="true">
@@ -58,6 +62,7 @@ export default function IllustratedScene({
         {variant === "lotus" && <Lotus />}
         {variant === "poruwa" && <Poruwa />}
         {variant === "peacock" && <Peacock />}
+        {variant === "couple" && <Couple />}
 
         {/* drifting frangipani petals (shared) */}
         <g>
@@ -132,6 +137,16 @@ export default function IllustratedScene({
           0% { transform: scale(0.5); opacity: 0.6; }
           100% { transform: scale(1.4); opacity: 0; }
         }
+        :global(.ill-heart) {
+          transform-origin: center;
+          animation: illHeart 3.6s ease-in-out infinite;
+        }
+        @keyframes illHeart {
+          0% { transform: translateY(0) scale(0.7); opacity: 0; }
+          20% { opacity: 0.9; }
+          80% { opacity: 0.9; }
+          100% { transform: translateY(-70px) scale(1.1); opacity: 0; }
+        }
         .ill-petal {
           animation-name: illFall;
           animation-timing-function: linear;
@@ -145,7 +160,7 @@ export default function IllustratedScene({
         }
         @media (prefers-reduced-motion: reduce) {
           .ill-petal, :global(.ill-hansa) { animation: none; opacity: 0.5; }
-          .ill-glow, :global(.ill-flame), :global(.ill-sway), :global(.ill-eye), :global(.ill-ripple) { animation: none; }
+          .ill-glow, :global(.ill-flame), :global(.ill-sway), :global(.ill-eye), :global(.ill-ripple), :global(.ill-heart) { animation: none; }
         }
       `}</style>
     </div>
@@ -305,6 +320,126 @@ function Peacock() {
       <path d="M150 192 L150 178" stroke="#1E5A8A" strokeWidth="3" />
       <circle cx="150" cy="176" r="3" fill="#1E5A8A" />
       <circle cx="153" cy="198" r="2" fill="#FFF" />
+    </g>
+  );
+}
+
+/* ---------- scene: bride & groom ---------- */
+function Couple() {
+  const SKIN = "#C8895E";
+  const HAIR = "#2B1B12";
+  const RED = "#8C1F2A";
+  const GOLD = "#C9A24C";
+  const GOLDL = "#E6CB7A";
+  const SUIT = "#2C2A36";
+
+  return (
+    <g>
+      {/* floral arch */}
+      <path d="M60 200 Q 200 70 340 200" fill="none" stroke="#7A8B4F" strokeWidth="4" />
+      {Array.from({ length: 13 }).map((_, i) => {
+        const t = i / 12;
+        const x = 60 + t * 280;
+        const y = 200 - Math.sin(Math.PI * t) * 130;
+        return (
+          <g key={i}>
+            <circle cx={x} cy={y} r={i % 2 ? 6 : 4.5} fill={i % 3 === 0 ? RED : i % 3 === 1 ? "#FFE7EC" : GOLDL} />
+            <circle cx={x} cy={y} r="1.6" fill={GOLD} />
+          </g>
+        );
+      })}
+
+      {/* ground shadows */}
+      <ellipse cx="158" cy="474" rx="48" ry="9" fill="#000" opacity="0.10" />
+      <ellipse cx="250" cy="474" rx="42" ry="9" fill="#000" opacity="0.10" />
+
+      <g className="ill-sway" style={{ transformOrigin: "204px 470px" }}>
+        {/* ---------------- BRIDE (osariya) ---------------- */}
+        <g>
+          {/* skirt with gold hem */}
+          <path d="M126 470 L150 306 Q158 298 166 306 L192 470 Z" fill={RED} />
+          <path d="M126 470 L192 470 L189 456 L129 456 Z" fill={GOLDL} />
+          {/* osariya fan pleat at hip */}
+          <path d="M150 322 Q132 360 130 410 Q146 392 152 330 Z" fill={GOLD} opacity="0.85" />
+          <path d="M150 322 Q132 360 130 410" fill="none" stroke={GOLDL} strokeWidth="1.5" />
+          {/* blouse */}
+          <path d="M142 262 Q158 254 174 262 L168 308 Q158 312 148 308 Z" fill={GOLD} />
+          {/* neck + head */}
+          <rect x="153" y="246" width="10" height="14" fill={SKIN} />
+          <circle cx="158" cy="234" r="20" fill={SKIN} />
+          {/* hair + bun + flowers */}
+          <path d="M138 232 Q140 210 158 208 Q176 210 178 232 Q172 222 158 222 Q144 222 138 232 Z" fill={HAIR} />
+          <circle cx="176" cy="222" r="9" fill={HAIR} />
+          <circle cx="180" cy="216" r="3" fill="#FFE7EC" />
+          <circle cx="184" cy="223" r="3" fill={GOLDL} />
+          {/* headpiece (nalalpata) */}
+          <path d="M150 218 Q158 212 166 218" fill="none" stroke={GOLDL} strokeWidth="2.5" />
+          <circle cx="158" cy="214" r="2.4" fill={GOLD} />
+          {/* face */}
+          <circle cx="152" cy="234" r="1.6" fill="#3A2A1A" />
+          <circle cx="164" cy="234" r="1.6" fill="#3A2A1A" />
+          <path d="M154 242 Q158 245 162 242" fill="none" stroke="#7A3B33" strokeWidth="1.4" />
+          {/* necklace */}
+          <path d="M150 258 Q158 266 166 258" fill="none" stroke={GOLDL} strokeWidth="2" />
+          <circle cx="158" cy="264" r="2" fill={GOLD} />
+          {/* bouquet held at front */}
+          <g>
+            <path d="M150 318 L150 340" stroke="#7A8B4F" strokeWidth="2" />
+            <circle cx="146" cy="338" r="6" fill="#FFE7EC" />
+            <circle cx="155" cy="340" r="6" fill={RED} />
+            <circle cx="150" cy="346" r="6" fill={GOLDL} />
+            <circle cx="150" cy="341" r="2" fill={GOLD} />
+          </g>
+        </g>
+
+        {/* ---------------- GROOM (suit) ---------------- */}
+        <g>
+          {/* legs */}
+          <rect x="236" y="372" width="11" height="100" rx="3" fill={SUIT} />
+          <rect x="253" y="372" width="11" height="100" rx="3" fill={SUIT} />
+          {/* shoes */}
+          <ellipse cx="241" cy="472" rx="9" ry="5" fill="#1A1820" />
+          <ellipse cx="259" cy="472" rx="9" ry="5" fill="#1A1820" />
+          {/* jacket / torso */}
+          <path d="M230 380 L234 270 Q250 258 266 270 L270 380 Q250 388 230 380 Z" fill={SUIT} />
+          {/* white shirt + gold tie */}
+          <path d="M244 272 L250 330 L256 272 Q250 268 244 272 Z" fill="#FBF4E3" />
+          <path d="M250 276 L246 300 L250 322 L254 300 Z" fill={GOLD} />
+          {/* lapels */}
+          <path d="M244 272 L238 312 L246 286 Z" fill="#23212C" />
+          <path d="M256 272 L262 312 L254 286 Z" fill="#23212C" />
+          {/* pocket flower */}
+          <circle cx="262" cy="300" r="3.5" fill={RED} />
+          {/* neck + head */}
+          <rect x="245" y="248" width="10" height="14" fill={SKIN} />
+          <circle cx="250" cy="236" r="20" fill={SKIN} />
+          {/* hair */}
+          <path d="M230 234 Q232 212 250 210 Q268 212 270 234 Q264 222 250 222 Q236 222 230 234 Z" fill={HAIR} />
+          {/* face */}
+          <circle cx="244" cy="236" r="1.6" fill="#3A2A1A" />
+          <circle cx="256" cy="236" r="1.6" fill="#3A2A1A" />
+          <path d="M246 244 Q250 247 254 244" fill="none" stroke="#7A3B33" strokeWidth="1.4" />
+        </g>
+
+        {/* clasped hands between them */}
+        <path d="M192 350 Q204 344 218 352" fill="none" stroke={SKIN} strokeWidth="7" strokeLinecap="round" />
+      </g>
+
+      {/* floating hearts between the couple */}
+      {[
+        { x: 204, y: 300, s: 1, d: 0 },
+        { x: 188, y: 320, s: 0.7, d: 1.2 },
+        { x: 220, y: 312, s: 0.8, d: 2.1 },
+      ].map((h, i) => (
+        <g key={i} className="ill-heart" style={{ animationDelay: `${h.d}s` }}>
+          <path
+            transform={`translate(${h.x} ${h.y}) scale(${h.s})`}
+            d="M0 0 C -5 -6, -13 -1, 0 9 C 13 -1, 5 -6, 0 0 Z"
+            fill="#C2415A"
+            opacity="0.9"
+          />
+        </g>
+      ))}
     </g>
   );
 }
