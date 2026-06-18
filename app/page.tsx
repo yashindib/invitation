@@ -8,7 +8,6 @@ import IntroLetter from "@/components/sections/IntroLetter";
 import OurStory from "@/components/sections/OurStory";
 import EventDetails from "@/components/sections/EventDetails";
 import Countdown from "@/components/sections/Countdown";
-import Gallery from "@/components/sections/Gallery";
 import Location from "@/components/sections/Location";
 import DressCode from "@/components/sections/DressCode";
 import RSVP from "@/components/sections/RSVP";
@@ -62,7 +61,6 @@ export default function Home() {
         <OurStory />
         <EventDetails />
         <Countdown />
-        <Gallery />
         <Location />
         <DressCode />
         <RSVP />

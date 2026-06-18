@@ -6,6 +6,7 @@ import { config } from "@/lib/wedding-config";
 import { media } from "@/lib/media";
 import FlyingBirds from "@/components/fx/FlyingBirds";
 import PetalField from "@/components/fx/PetalField";
+import IllustratedScene from "@/components/fx/IllustratedScene";
 
 export default function VideoHero() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -18,11 +19,8 @@ export default function VideoHero() {
 
   return (
     <section className="relative h-screen-safe w-full overflow-hidden">
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${media.heroPoster})` }}
-        aria-hidden="true"
-      />
+      {/* animated illustrated backdrop (also the fallback if the video is blocked) */}
+      <IllustratedScene variant="poruwa" />
       <video
         key={srcIndex}
         ref={videoRef}
@@ -32,7 +30,6 @@ export default function VideoHero() {
         loop
         playsInline
         preload="auto"
-        poster={media.heroPoster}
         onError={handleError}
       >
         <source src={sources[srcIndex]} type="video/mp4" />

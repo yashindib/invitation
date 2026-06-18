@@ -1,11 +1,12 @@
 "use client";
 
 import { config } from "@/lib/wedding-config";
-import { media } from "@/lib/media";
 import { Reveal } from "@/components/fx/Reveal";
 import SectionHeading from "@/components/fx/SectionHeading";
 import PetalField from "@/components/fx/PetalField";
-import AnimatedImage from "@/components/fx/AnimatedImage";
+import IllustratedScene, { SceneVariant } from "@/components/fx/IllustratedScene";
+
+const STORY_SCENES: SceneVariant[] = ["lotus", "poruwa", "lamp"];
 
 export default function OurStory() {
   return (
@@ -32,12 +33,7 @@ export default function OurStory() {
               >
                 <Reveal className="w-full sm:w-1/2" y={50}>
                   <div className="group relative aspect-[4/5] overflow-hidden rounded-xl shadow-rose-lg">
-                    <AnimatedImage
-                      src={media.story[i % media.story.length]}
-                      alt={s.title}
-                      sizes="(max-width: 640px) 90vw, 45vw"
-                      variant={i}
-                    />
+                    <IllustratedScene variant={STORY_SCENES[i % STORY_SCENES.length]} />
                     <span className="absolute left-4 top-4 z-10 rounded-full glass-blush px-4 py-1 font-display text-sm tracking-widest text-wine">
                       {s.year}
                     </span>

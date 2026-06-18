@@ -10,7 +10,7 @@ export default function DressCode() {
     <section className="relative overflow-hidden bg-romantic-grad px-6 py-24 sm:py-32">
       <div className="mx-auto max-w-2xl text-center">
         <SectionHeading
-          index={6}
+          index={5}
           kicker="A little note on attire"
           kickerSi="ඇඳුම් රටාව"
           title="Dress Code"

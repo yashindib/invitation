@@ -1,17 +1,16 @@
 "use client";
 
 import { config } from "@/lib/wedding-config";
-import { media } from "@/lib/media";
 import { Reveal } from "@/components/fx/Reveal";
 import SectionHeading from "@/components/fx/SectionHeading";
-import AnimatedImage from "@/components/fx/AnimatedImage";
+import IllustratedScene from "@/components/fx/IllustratedScene";
 
 export default function Location() {
   return (
     <section className="relative overflow-hidden bg-ivory px-6 py-24 sm:py-32">
       <div className="mx-auto max-w-5xl">
         <SectionHeading
-          index={5}
+          index={4}
           kicker="Find your way"
           kickerSi="ස්ථානය"
           title="The Venue"
@@ -20,12 +19,7 @@ export default function Location() {
         <div className="mt-12 grid items-center gap-8 sm:grid-cols-2">
           <Reveal y={50}>
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-rose-lg">
-              <AnimatedImage
-                src={media.venue}
-                alt={config.reception.name}
-                sizes="(max-width: 640px) 90vw, 45vw"
-                variant={2}
-              />
+              <IllustratedScene variant="peacock" />
             </div>
           </Reveal>
 

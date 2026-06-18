@@ -61,7 +61,7 @@ export default function RSVP() {
     <section className="relative overflow-hidden bg-cream px-6 py-24 sm:py-32">
       <div ref={hostRef} className="relative mx-auto max-w-xl">
         <SectionHeading
-          index={7}
+          index={6}
           kicker="We hope you can come"
           kickerSi="පැමිණෙන්න"
           title="RSVP"
